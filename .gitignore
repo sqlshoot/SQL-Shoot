@@ -1,0 +1,7 @@
+
+/.build/output/**
+/.vs/**
+**/obj/**
+**/bin/Debug/**
+**/bin/Release/**
+/SqlShoot.sln.DotSettings.user
