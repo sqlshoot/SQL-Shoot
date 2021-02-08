@@ -20,6 +20,12 @@ Change control for the database
 - Docker image
 - C# API via a NuGet package
 
+## Get Started
+
+[See the website for the quick start guide](https://sql-shoot-website-git-master.sqlshoot.vercel.app/)
+
+[Download the latest releases](https://github.com/sqlshoot/SQL-Shoot/releases/)
+
 # Community
 
 Get involved with the SQL Shoot community!
@@ -32,6 +38,6 @@ Join the **GitHub Discussion** board to learn and share
 
 ## Other info
 
-Website & Documentation: Coming soon...
+Website & Documentation: https://sql-shoot-website-git-master.sqlshoot.vercel.app/
 
 Licnese: [GNU LGPL V3.0](https://choosealicense.com/licenses/lgpl-3.0/)
