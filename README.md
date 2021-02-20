@@ -22,7 +22,7 @@ Change control for the database
 
 ## Get Started
 
-[See the website for the quick start guide](https://sql-shoot-website-git-master.sqlshoot.vercel.app/)
+[See the website for the quick start guide](https://www.sqlshoot.com/)
 
 [Download the latest releases](https://github.com/sqlshoot/SQL-Shoot/releases/)
 
@@ -38,6 +38,6 @@ Join the **GitHub Discussion** board to learn and share
 
 ## Other info
 
-Website & Documentation: https://sql-shoot-website-git-master.sqlshoot.vercel.app/
+Website & Documentation: https://www.sqlshoot.com/
 
 Licnese: [GNU LGPL V3.0](https://choosealicense.com/licenses/lgpl-3.0/)

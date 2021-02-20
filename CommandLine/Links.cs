@@ -20,7 +20,7 @@ namespace CLI
 {
     public static class Links
     {
-        public const string Troubleshooting = "https://sql-shoot-website-git-master.sqlshoot.vercel.app/documentation/troubleshooting";
-        public const string Website = "https://sql-shoot-website-git-master.sqlshoot.vercel.app/";
+        public const string Troubleshooting = "https://www.sqlshoot.com/documentation/troubleshooting";
+        public const string Website = "https://www.sqlshoot.com/";
     }
 }
