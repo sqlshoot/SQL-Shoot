@@ -2,6 +2,21 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <Version>0.2.0</Version>
+    <PackageId>SqlShoot</PackageId>
+    <Authors>SQL Shoot</Authors>
+    <Product>SQL Shoot</Product>
+    <Description>Change control for the database</Description>
+    <Copyright>All rights reserved</Copyright>
+    <PackageProjectUrl>https://sqlshoot.com/</PackageProjectUrl>
+    <PackageLicenseExpression></PackageLicenseExpression>
+    <PackageIcon>sqlshoot-square.png</PackageIcon>
+    <RepositoryUrl>https://github.com/sqlshoot/SQL-Shoot</RepositoryUrl>
+    <PackageTags>sql database version-control CLI command-line migrations schema</PackageTags>
+    <PackageReleaseNotes>Initial release for NuGet</PackageReleaseNotes>
+    <NeutralLanguage />
+    <PackageLicenseFile>COPYING.txt</PackageLicenseFile>
   </PropertyGroup>
 
   <ItemGroup>
@@ -12,6 +27,14 @@
     <None Remove="Databases\PostgreSQL\Write.sql" />
     <None Remove="Databases\SqlServer\Delete.sql" />
     <None Remove="Databases\SqlServer\UpdateChecksum.sql" />
+    <None Include="..\..\sqlshoot-square.png">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
+    <None Include="..\COPYING.txt">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
   </ItemGroup>
 
   <ItemGroup>
