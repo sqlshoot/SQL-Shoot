@@ -32,7 +32,6 @@ using SqlShootEngine.Exceptions;
 using SqlShootEngine.Resources;
 using Microsoft.Data.SqlClient;
 using Npgsql;
-using SqlParser;
 
 namespace SqlShootEngine
 {
