@@ -37,6 +37,7 @@ namespace SqlShootEngine
 {
     /// <summary>
     /// SQL Shoot - Change control for the database
+    /// See https://sqlshoot.com/documentation/nuget for usage instructions
     /// </summary>
     public class SqlShoot : ISqlShoot
     {
