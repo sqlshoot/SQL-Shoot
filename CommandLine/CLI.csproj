@@ -12,7 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Engine\Engine.csproj" />
+    <ProjectReference Include="..\Engine\SqlShootEngine.csproj" />
   </ItemGroup>
 
 </Project>

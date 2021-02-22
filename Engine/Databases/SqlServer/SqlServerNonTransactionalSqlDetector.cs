@@ -20,7 +20,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Engine.Databases.SqlServer
+namespace SqlShootEngine.Databases.SqlServer
 {
     internal class SqlServerNonTransactionalSqlDetector : INonTransactionalSqlDetector
     {

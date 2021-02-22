@@ -22,19 +22,19 @@ using System.Data;
 using System.Data.SQLite;
 using System.Linq;
 using System.Text;
-using Engine.DatabaseInteraction;
-using Engine.DatabaseInteraction.ChangeHistory;
-using Engine.Databases.PostgreSQL;
-using Engine.Databases.Shared;
-using Engine.Databases.SQLite;
-using Engine.Databases.SqlServer;
-using Engine.Exceptions;
-using Engine.Resources;
+using SqlShootEngine.DatabaseInteraction;
+using SqlShootEngine.DatabaseInteraction.ChangeHistory;
+using SqlShootEngine.Databases.PostgreSQL;
+using SqlShootEngine.Databases.Shared;
+using SqlShootEngine.Databases.SQLite;
+using SqlShootEngine.Databases.SqlServer;
+using SqlShootEngine.Exceptions;
+using SqlShootEngine.Resources;
 using Microsoft.Data.SqlClient;
 using Npgsql;
 using SqlParser;
 
-namespace Engine
+namespace SqlShootEngine
 {
     /// <summary>
     /// SQL Shoot - Change control for the database

@@ -1,6 +1,6 @@
-﻿using Engine.DatabaseInteraction;
+﻿using SqlShootEngine.DatabaseInteraction;
 
-namespace Engine.Databases.SqlServer
+namespace SqlShootEngine.Databases.SqlServer
 {
     internal class SqlServerDatabaseVersionProvider : IDatabaseVersionProvider
     {

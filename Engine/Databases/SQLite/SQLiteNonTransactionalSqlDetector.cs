@@ -16,7 +16,7 @@
  * along with SQL Shoot. If not, see <https://www.gnu.org/licenses/>.
  */
 #endregion
-namespace Engine.Databases.SQLite
+namespace SqlShootEngine.Databases.SQLite
 {
     internal class SQLiteNonTransactionalSqlDetector : INonTransactionalSqlDetector
     {

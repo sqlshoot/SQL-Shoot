@@ -19,7 +19,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Engine.DatabaseInteraction.ChangeHistory
+namespace SqlShootEngine.DatabaseInteraction.ChangeHistory
 {
     public class ChangeHistory
     {

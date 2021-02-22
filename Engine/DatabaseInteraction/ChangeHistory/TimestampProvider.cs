@@ -16,10 +16,10 @@
  * along with SQL Shoot. If not, see <https://www.gnu.org/licenses/>.
  */
 #endregion
-using Engine.Databases.Shared;
+using SqlShootEngine.Databases.Shared;
 using System;
 
-namespace Engine.DatabaseInteraction.ChangeHistory
+namespace SqlShootEngine.DatabaseInteraction.ChangeHistory
 {
     internal class TimestampProvider : ITimestampProvider
     {

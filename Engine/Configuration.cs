@@ -18,7 +18,7 @@
 #endregion
 using System.Collections.Generic;
 
-namespace Engine
+namespace SqlShootEngine
 {
     /// <summary>
     /// Configuration options for SQL Shoot

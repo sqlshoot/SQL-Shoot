@@ -1,6 +1,6 @@
-﻿using Engine.DatabaseInteraction;
+﻿using SqlShootEngine.DatabaseInteraction;
 
-namespace Engine.Databases.SQLite
+namespace SqlShootEngine.Databases.SQLite
 {
     internal class SQLiteDatabaseVersionProvider : IDatabaseVersionProvider
     {

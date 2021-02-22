@@ -37,10 +37,10 @@
  * along with SQL Shoot. If not, see <https://www.gnu.org/licenses/>.
  */
 #endregion
-using Engine.DatabaseInteraction;
+using SqlShootEngine.DatabaseInteraction;
 using System.Collections.Generic;
 
-namespace Engine.Databases.SqlServer
+namespace SqlShootEngine.Databases.SqlServer
 {
     internal class SqlServerSchemaNuker : ISchemaNuker
     {

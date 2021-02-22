@@ -16,7 +16,7 @@
  * along with SQL Shoot. If not, see <https://www.gnu.org/licenses/>.
  */
 #endregion
-namespace Engine.Databases
+namespace SqlShootEngine.Databases
 {
     internal interface INonTransactionalSqlDetector
     {

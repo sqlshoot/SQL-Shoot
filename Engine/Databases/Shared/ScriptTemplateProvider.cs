@@ -19,7 +19,7 @@
 using System.Collections.Generic;
 using System.IO;
 
-namespace Engine.Databases.Shared
+namespace SqlShootEngine.Databases.Shared
 {
     internal class ScriptTemplateProvider
     {

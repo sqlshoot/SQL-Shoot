@@ -18,7 +18,7 @@
 #endregion
 using System;
 
-namespace Engine
+namespace SqlShootEngine
 {
     internal static class Logger
     {

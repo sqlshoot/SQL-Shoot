@@ -20,9 +20,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Engine.DatabaseInteraction;
+using SqlShootEngine.DatabaseInteraction;
 
-namespace Engine.Resources
+namespace SqlShootEngine.Resources
 {
     internal class ResourceResolver : IResourceResolver
     {

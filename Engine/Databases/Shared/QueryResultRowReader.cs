@@ -16,10 +16,10 @@
  * along with SQL Shoot. If not, see <https://www.gnu.org/licenses/>.
  */
 #endregion
-using Engine.DatabaseInteraction;
+using SqlShootEngine.DatabaseInteraction;
 using System.Data;
 
-namespace Engine.Databases.Shared
+namespace SqlShootEngine.Databases.Shared
 {
     internal class QueryResultRowReader : IQueryResultRowReader
     {

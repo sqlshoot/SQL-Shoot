@@ -18,7 +18,7 @@
 #endregion
 using System.Collections.Generic;
 
-namespace Engine.Resources
+namespace SqlShootEngine.Resources
 {
     internal interface IResourceResolver
     {

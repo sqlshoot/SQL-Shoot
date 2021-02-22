@@ -16,10 +16,10 @@
  * along with SQL Shoot. If not, see <https://www.gnu.org/licenses/>.
  */
 #endregion
-using Engine.Exceptions;
+using SqlShootEngine.Exceptions;
 using System;
 
-namespace Engine
+namespace SqlShootEngine
 {
     internal static class ConnectionStringUtils
     {

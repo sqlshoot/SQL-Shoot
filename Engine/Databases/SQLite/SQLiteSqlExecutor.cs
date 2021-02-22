@@ -16,12 +16,12 @@
  * along with SQL Shoot. If not, see <https://www.gnu.org/licenses/>.
  */
 #endregion
-using Engine.DatabaseInteraction;
-using Engine.Databases.Shared;
+using SqlShootEngine.DatabaseInteraction;
+using SqlShootEngine.Databases.Shared;
 using System;
 using System.Collections.Generic;
 
-namespace Engine.Databases.SQLite
+namespace SqlShootEngine.Databases.SQLite
 {
     internal class SQLiteSqlExecutor : ISqlExecutor
     {

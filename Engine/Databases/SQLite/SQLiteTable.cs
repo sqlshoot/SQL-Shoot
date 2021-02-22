@@ -16,9 +16,9 @@
  * along with SQL Shoot. If not, see <https://www.gnu.org/licenses/>.
  */
 #endregion
-using Engine.DatabaseInteraction;
+using SqlShootEngine.DatabaseInteraction;
 
-namespace Engine.Databases.SQLite
+namespace SqlShootEngine.Databases.SQLite
 {
     internal class SQLiteTable
     {

@@ -17,9 +17,9 @@
  */
 #endregion
 using System.Collections.Generic;
-using Engine.DatabaseInteraction.ChangeHistory;
+using SqlShootEngine.DatabaseInteraction.ChangeHistory;
 
-namespace Engine
+namespace SqlShootEngine
 {
     /// <summary>
     /// This class contains the change history for the current database, and any

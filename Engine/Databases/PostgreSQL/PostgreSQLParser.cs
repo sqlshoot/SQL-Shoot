@@ -1,6 +1,6 @@
 ﻿using SqlParser;
 
-namespace Engine.Databases.PostgreSQL
+namespace SqlShootEngine.Databases.PostgreSQL
 {
     public class PostgreSQLParser : Parser
     {

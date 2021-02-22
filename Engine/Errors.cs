@@ -18,10 +18,10 @@
 #endregion
 using System.Collections.Generic;
 using System.Linq;
-using Engine.DatabaseInteraction;
-using Engine.DatabaseInteraction.ChangeHistory;
+using SqlShootEngine.DatabaseInteraction;
+using SqlShootEngine.DatabaseInteraction.ChangeHistory;
 
-namespace Engine
+namespace SqlShootEngine
 {
     /// <summary>
     /// Errors detected in the SQL Shoot configuration

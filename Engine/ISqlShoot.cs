@@ -16,9 +16,9 @@
  * along with SQL Shoot. If not, see <https://www.gnu.org/licenses/>.
  */
 #endregion
-using Engine.DatabaseInteraction.ChangeHistory;
+using SqlShootEngine.DatabaseInteraction.ChangeHistory;
 
-namespace Engine
+namespace SqlShootEngine
 {
     public interface ISqlShoot
     {

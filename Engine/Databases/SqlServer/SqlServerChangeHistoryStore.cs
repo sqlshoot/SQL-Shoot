@@ -19,11 +19,11 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
-using Engine.DatabaseInteraction;
-using Engine.DatabaseInteraction.ChangeHistory;
-using Engine.Databases.Shared;
+using SqlShootEngine.DatabaseInteraction;
+using SqlShootEngine.DatabaseInteraction.ChangeHistory;
+using SqlShootEngine.Databases.Shared;
 
-namespace Engine.Databases.SqlServer
+namespace SqlShootEngine.Databases.SqlServer
 {
     internal class SqlServerChangeHistoryStore : IChangeHistoryStore
     {

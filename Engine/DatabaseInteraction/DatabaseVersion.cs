@@ -1,4 +1,4 @@
-﻿namespace Engine.DatabaseInteraction
+﻿namespace SqlShootEngine.DatabaseInteraction
 {
     internal class DatabaseVersion
     {

@@ -19,7 +19,7 @@
 using System;
 using System.Runtime.Serialization;
 
-namespace Engine.Exceptions
+namespace SqlShootEngine.Exceptions
 {
     [Serializable]
     public class SqlShootInvalidConfigurationException : Exception

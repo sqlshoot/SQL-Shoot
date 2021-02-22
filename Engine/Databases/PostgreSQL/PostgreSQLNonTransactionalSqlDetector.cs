@@ -37,10 +37,10 @@
  * along with SQL Shoot. If not, see <https://www.gnu.org/licenses/>.
  */
 #endregion
-using Engine.DatabaseInteraction;
+using SqlShootEngine.DatabaseInteraction;
 using System.Text.RegularExpressions;
 
-namespace Engine.Databases.PostgreSQL
+namespace SqlShootEngine.Databases.PostgreSQL
 {
     internal class PostgreSQLNonTransactionalSqlDetector : INonTransactionalSqlDetector
     {

@@ -1,6 +1,6 @@
 ﻿using SqlParser;
 
-namespace Engine.Databases.SQLite
+namespace SqlShootEngine.Databases.SQLite
 {
     public class SQLiteParser : Parser
     {

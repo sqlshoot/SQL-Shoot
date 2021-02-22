@@ -16,13 +16,13 @@
  * along with SQL Shoot. If not, see <https://www.gnu.org/licenses/>.
  */
 #endregion
-using Engine.DatabaseInteraction;
+using SqlShootEngine.DatabaseInteraction;
 using System;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace Engine.Resources
+namespace SqlShootEngine.Resources
 {
     internal class FileResource : IResource
     {

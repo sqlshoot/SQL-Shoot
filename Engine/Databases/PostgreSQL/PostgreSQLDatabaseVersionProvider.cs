@@ -1,6 +1,6 @@
-﻿using Engine.DatabaseInteraction;
+﻿using SqlShootEngine.DatabaseInteraction;
 
-namespace Engine.Databases.PostgreSQL
+namespace SqlShootEngine.Databases.PostgreSQL
 {
     internal class PostgreSQLDatabaseVersionProvider : IDatabaseVersionProvider
     {

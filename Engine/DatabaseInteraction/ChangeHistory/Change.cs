@@ -16,7 +16,7 @@
  * along with SQL Shoot. If not, see <https://www.gnu.org/licenses/>.
  */
 #endregion
-namespace Engine.DatabaseInteraction.ChangeHistory
+namespace SqlShootEngine.DatabaseInteraction.ChangeHistory
 {
     public class Change
     {

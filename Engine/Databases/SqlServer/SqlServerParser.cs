@@ -1,7 +1,7 @@
 ﻿using SqlParser;
 using System.Text.RegularExpressions;
 
-namespace Engine.Databases.SqlServer
+namespace SqlShootEngine.Databases.SqlServer
 {
     public class SqlServerParser : Parser
     {
