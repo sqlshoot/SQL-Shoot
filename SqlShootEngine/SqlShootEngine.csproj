@@ -14,7 +14,7 @@
     <PackageIcon>sqlshoot-square.png</PackageIcon>
     <RepositoryUrl>https://github.com/sqlshoot/SQL-Shoot</RepositoryUrl>
     <PackageTags>sql database version-control CLI command-line migrations schema</PackageTags>
-    <PackageReleaseNotes>Initial release for NuGet</PackageReleaseNotes>
+    <PackageReleaseNotes>Update XML Doc</PackageReleaseNotes>
     <NeutralLanguage />
     <PackageLicenseFile>COPYING.txt</PackageLicenseFile>
   </PropertyGroup>
