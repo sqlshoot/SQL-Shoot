@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
-    <Version>0.2.0</Version>
+    <Version>0.2.1</Version>
     <PackageId>SqlShoot</PackageId>
     <Authors>SQL Shoot</Authors>
     <Product>SQL Shoot</Product>
@@ -17,6 +17,11 @@
     <PackageReleaseNotes>Initial release for NuGet</PackageReleaseNotes>
     <NeutralLanguage />
     <PackageLicenseFile>COPYING.txt</PackageLicenseFile>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DocumentationFile>bin\Release\SqlShootEngine.xml</DocumentationFile>
+    <OutputPath>bin\Release\</OutputPath>
   </PropertyGroup>
 
   <ItemGroup>

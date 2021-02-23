@@ -93,7 +93,7 @@ namespace CLI
 
         private static string GetProductVersion()
         {
-            return "0.2.0";
+            return "0.2.1";
         }
 
         private static CommandLineConfiguration ParseCommandLineArguments(string[] args)
