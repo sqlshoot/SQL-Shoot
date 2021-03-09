@@ -29,7 +29,6 @@ namespace SqlShootEngine.Databases.SQLite
     {
         private readonly ISqlExecutor _sqlExecutor;
         private readonly ITimestampProvider _timestampProvider;
-        private readonly ScriptTemplateProvider _scriptTemplateProvider;
 
         private const string TableName = "SqlShootChangeHistory";
 
@@ -41,17 +40,11 @@ namespace SqlShootEngine.Databases.SQLite
             _timestampProvider = timeStampProvider;
 
             var scriptDirectory = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Databases", "SQLite");
-            _scriptTemplateProvider = new ScriptTemplateProvider(scriptDirectory);
         }
 
         public bool Exists()
         {
-            var script = _scriptTemplateProvider.Get(
-                "Exists",
-                new Dictionary<string, string>
-                {
-                    { "tableName", TableName }
-                });
+            var script = $"SELECT name FROM sqlite_master WHERE type = 'table' AND name = '{TableName}'";
 
             var result = _sqlExecutor.ExecuteWithResult(script);
 
@@ -60,12 +53,14 @@ namespace SqlShootEngine.Databases.SQLite
 
         public void Create()
         {
-            var script = _scriptTemplateProvider.Get(
-                "Create",
-                new Dictionary<string, string>
-                {
-                    { "tableName", TableName }
-                });
+            var script = $@"CREATE TABLE {TableName} (
+                            [name][TEXT],
+                            [checksum] [TEXT],
+	                        [source] [TEXT],
+	                        [type] [TEXT],
+	                        [state] [TEXT],
+	                        [timestamp] [TEXT]
+                        )";
 
             _sqlExecutor.Execute(script);
         }
@@ -93,50 +88,44 @@ namespace SqlShootEngine.Databases.SQLite
         {
             var timestamp = _timestampProvider.GetTimestampForCurrentMoment();
 
-            var script = _scriptTemplateProvider.Get(
-                "Write",
-                new Dictionary<string, string>
-                {
-                    { "tableName", TableName },
-                    { "name", change.Name },
-                    { "checksum", change.Checksum },
-                    { "source", change.Source },
-                    { "type", change.Type },
-                    { "state", change.State },
-                    { "timestamp", timestamp },
-                });
+            var script = $@"INSERT INTO {TableName}
+                            (name
+                            , checksum
+                            , source
+                            , type
+                            , state
+                            , timestamp)
+                        VALUES
+                            ('{change.Name}'
+                            , '{change.Checksum}'
+                            , '{change.Source}'
+                            , '{change.Type}'
+                            , '{change.State}'
+                            , '{timestamp}')";
 
             _sqlExecutor.Execute(script);
         }
 
         public void Delete(Change change)
         {
-            var script = _scriptTemplateProvider.Get(
-                "Delete",
-                new Dictionary<string, string>
-                {
-                    { "tableName", TableName },
-                    { "name", change.Name },
-                    { "checksum", change.Checksum },
-                    { "source", change.Source },
-                    { "type", change.Type },
-                    { "state", change.State },
-                });
+            var script = @$"DELETE FROM {TableName}
+                            WHERE
+                                name LIKE '%{change.Name}%' AND
+                                checksum LIKE '%{change.Checksum}%' AND
+                                source LIKE '%{change.Source}%' AND
+                                type LIKE '%{change.Type}%' AND
+                                state LIKE '%{change.State}%'";
 
             _sqlExecutor.Execute(script);
         }
 
         public void UpdateChecksum(string changeName, string newChecksum)
         {
-            var script = _scriptTemplateProvider.Get(
-                "UpdateChecksum",
-                new Dictionary<string, string>
-                {
-                    { "tableName", TableName },
-                    { "name", changeName },
-                    { "newChecksum", newChecksum },
-                });
-
+            var script = $@"UPDATE {TableName}
+                            SET
+                                checksum = '{newChecksum}'
+                            WHERE
+                                name = '{changeName}";
             _sqlExecutor.Execute(script);
         }
     }

@@ -22,7 +22,6 @@ Create classes which implement the following interfaces:
 - `IDatabaseVersionProvider`
 
 Tips for implementing `IChangeHistoryStore`:
-- Inject the `ScriptTemplateProvider` to read in scripts (see existing code by way of example)
 - Inject the `ITimestampProvider` to get timestamps
 
 Create a subclass of `Parser` for your database. You won't necessarily need to override any of the methods to begin with.

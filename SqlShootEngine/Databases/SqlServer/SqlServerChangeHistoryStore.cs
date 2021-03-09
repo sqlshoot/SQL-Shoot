@@ -31,7 +31,6 @@ namespace SqlShootEngine.Databases.SqlServer
         private readonly ITimestampProvider _timestampProvider;
         private readonly string _hostSchemaName;
         private readonly string _hostDatabaseName;
-        private readonly ScriptTemplateProvider _scriptTemplateProvider;
 
         private const string TableName = "SqlShootChangeHistory";
 
@@ -47,18 +46,11 @@ namespace SqlShootEngine.Databases.SqlServer
             _hostDatabaseName = hostDatabaseName;
 
             var scriptDirectory = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Databases", "SqlServer");
-            _scriptTemplateProvider = new ScriptTemplateProvider(scriptDirectory);
         }
 
         public bool Exists()
         {
-            var script = _scriptTemplateProvider.Get(
-                "Exists",
-                new Dictionary<string, string>
-                {
-                    { "schemaName", _hostSchemaName },
-                    { "tableName", TableName }
-                });
+            var script = $"SELECT *  FROM INFORMATION_SCHEMA.TABLES  WHERE TABLE_SCHEMA = '{_hostSchemaName}' AND  TABLE_NAME = '{TableName}'";
 
             _sqlExecutor.SetDatabaseContext(_hostDatabaseName);
             var result = _sqlExecutor.ExecuteWithResult(script);
@@ -68,13 +60,13 @@ namespace SqlShootEngine.Databases.SqlServer
 
         public void Create()
         {
-            var script = _scriptTemplateProvider.Get(
-                "Create",
-                new Dictionary<string, string>
-                {
-                    { "schemaName", _hostSchemaName },
-                    { "tableName", TableName }
-                });
+            var script = $@"CREATE TABLE[{_hostSchemaName}].[{TableName}](
+	                        [name][nvarchar](max) NOT NULL,
+                            [checksum] [nvarchar](max)NOT NULL,
+	                        [source] [nvarchar](max)NOT NULL,
+	                        [type] [nvarchar](max)NOT NULL,
+	                        [state] [nvarchar](max)NOT NULL,
+	                        [timestamp] [nvarchar](max)NOT NULL)";
 
             _sqlExecutor.SetDatabaseContext(_hostDatabaseName);
             _sqlExecutor.Execute(script);
@@ -104,19 +96,20 @@ namespace SqlShootEngine.Databases.SqlServer
         {
             var timestamp = _timestampProvider.GetTimestampForCurrentMoment();
 
-            var script = _scriptTemplateProvider.Get(
-                "Write",
-                new Dictionary<string, string>
-                {
-                    { "schemaName", _hostSchemaName },
-                    { "tableName", TableName },
-                    { "name", change.Name },
-                    { "checksum", change.Checksum },
-                    { "source", change.Source },
-                    { "type", change.Type },
-                    { "state", change.State },
-                    { "timestamp", timestamp },
-                });
+            var script = $@"INSERT INTO [{_hostSchemaName}].[{TableName}]
+                            ([name]
+                            ,[checksum]
+                            ,[source]
+                            ,[type]
+                            ,[state]
+                            ,[timestamp])
+                        VALUES
+                            ('{change.Name}'
+                            ,'{change.Checksum}'
+                            ,'{change.Source}'
+                            ,'{change.Type}'
+                            ,'{change.State}'
+                            ,'{timestamp}')";
 
             _sqlExecutor.SetDatabaseContext(_hostDatabaseName);
             _sqlExecutor.Execute(script);
@@ -124,18 +117,13 @@ namespace SqlShootEngine.Databases.SqlServer
 
         public void Delete(Change change)
         {
-            var script = _scriptTemplateProvider.Get(
-                "Delete",
-                new Dictionary<string, string>
-                {
-                    { "schemaName", _hostSchemaName },
-                    { "tableName", TableName },
-                    { "name", change.Name },
-                    { "checksum", change.Checksum },
-                    { "source", change.Source },
-                    { "type", change.Type },
-                    { "state", change.State },
-                });
+            var script = $@"DELETE FROM [{_hostSchemaName}].[{TableName}]
+                            WHERE
+                                name LIKE '%{change.Name}%' AND
+                                checksum LIKE '%{change.Checksum}%' AND
+                                source LIKE '%{change.Source}%' AND
+                                type LIKE '%{change.Type}%' AND
+                                state LIKE '{change.State}%'";
 
             _sqlExecutor.SetDatabaseContext(_hostDatabaseName);
             _sqlExecutor.Execute(script);
@@ -143,15 +131,11 @@ namespace SqlShootEngine.Databases.SqlServer
 
         public void UpdateChecksum(string changeName, string newChecksum)
         {
-            var script = _scriptTemplateProvider.Get(
-                "UpdateChecksum",
-                new Dictionary<string, string>
-                {
-                    { "schemaName", _hostSchemaName },
-                    { "tableName", TableName },
-                    { "name", changeName },
-                    { "newChecksum", newChecksum },
-                });
+            var script = $@"UPDATE [{_hostSchemaName}].[{TableName}]
+                            SET
+                                checksum = '{newChecksum}'
+                            WHERE
+                                name = '{changeName}'";
 
             _sqlExecutor.SetDatabaseContext(_hostDatabaseName);
             _sqlExecutor.Execute(script);

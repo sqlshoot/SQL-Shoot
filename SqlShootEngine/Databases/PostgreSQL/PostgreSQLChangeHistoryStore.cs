@@ -32,7 +32,6 @@ namespace SqlShootEngine.Databases.PostgreSQL
         private readonly ITimestampProvider _timestampProvider;
         private readonly string _hostSchemaName;
         private readonly string _hostDatabaseName;
-        private readonly ScriptTemplateProvider _scriptTemplateProvider;
 
         private const string TableName = "SqlShootChangeHistory";
 
@@ -48,18 +47,16 @@ namespace SqlShootEngine.Databases.PostgreSQL
             _hostDatabaseName = hostDatabaseName;
 
             var scriptDirectory = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Databases", "PostgreSQL");
-            _scriptTemplateProvider = new ScriptTemplateProvider(scriptDirectory);
         }
 
         public bool Exists()
         {
-            var script = _scriptTemplateProvider.Get(
-                "Exists",
-                new Dictionary<string, string>
-                {
-                    { "schemaName", _hostSchemaName },
-                    { "tableName", TableName }
-                });
+            var script = @$"SELECT EXISTS (
+                           SELECT FROM pg_catalog.pg_class c
+                           JOIN   pg_catalog.pg_namespace n ON n.oid = c.relnamespace
+                           WHERE  n.nspname = '{_hostSchemaName}'
+                           AND    c.relname = '{TableName}'
+                           );";
 
             var result = false;
             
@@ -73,13 +70,14 @@ namespace SqlShootEngine.Databases.PostgreSQL
 
         public void Create()
         {
-            var script = _scriptTemplateProvider.Get(
-                "Create",
-                new Dictionary<string, string>
-                {
-                    { "schemaName", _hostSchemaName },
-                    { "tableName", TableName }
-                });
+            var script = $@"CREATE TABLE ""{_hostSchemaName}"".""{TableName}"" (
+	                        name varchar NOT NULL,
+                            checksum varchar NOT NULL,
+	                        source varchar NOT NULL,
+                            type varchar NOT NULL,
+	                        state varchar NOT NULL,
+                            timestamp varchar NOT NULL
+                        )";
 
             _sqlExecutor.Execute(script);
         }
@@ -107,52 +105,44 @@ namespace SqlShootEngine.Databases.PostgreSQL
         {
             var timestamp = _timestampProvider.GetTimestampForCurrentMoment();
 
-            var script = _scriptTemplateProvider.Get(
-                "Write",
-                new Dictionary<string, string>
-                {
-                    { "schemaName", _hostSchemaName },
-                    { "tableName", TableName },
-                    { "name", change.Name },
-                    { "checksum", change.Checksum },
-                    { "source", change.Source },
-                    { "type", change.Type },
-                    { "state", change.State },
-                    { "timestamp", timestamp },
-                });
+            var script = $@"INSERT INTO ""{_hostSchemaName}"".""{TableName}""
+                            (name
+                            ,checksum
+                            ,source
+                            ,type
+                            ,state
+                            ,timestamp)
+                        VALUES
+                            ('{change.Name}'
+                            ,'{change.Checksum}'
+                            ,'{change.Source}'
+                            ,'{change.Type}'
+                            ,'{change.State}'
+                            ,'{timestamp}')";
 
             _sqlExecutor.Execute(script);
         }
 
         public void Delete(Change change)
         {
-            var script = _scriptTemplateProvider.Get(
-                "Delete",
-                new Dictionary<string, string>
-                {
-                    { "schemaName", _hostSchemaName },
-                    { "tableName", TableName },
-                    { "name", change.Name },
-                    { "checksum", change.Checksum },
-                    { "source", change.Source },
-                    { "type", change.Type },
-                    { "state", change.State },
-                });
+            var script = $@"DELETE FROM ""{_hostSchemaName}"".""{TableName}""
+                            WHERE
+                                name = '{change.Name}' AND
+                                checksum = '{change.Checksum}' AND
+                                source = '{change.Source}' AND
+                                type = '{change.Type}' AND
+                                state = '{change.State}';";
 
             _sqlExecutor.Execute(script);
         }
 
         public void UpdateChecksum(string changeName, string newChecksum)
         {
-            var script = _scriptTemplateProvider.Get(
-                "UpdateChecksum",
-                new Dictionary<string, string>
-                {
-                    { "schemaName", _hostSchemaName },
-                    { "tableName", TableName },
-                    { "name", changeName },
-                    { "newChecksum", newChecksum },
-                });
+            var script = $@"UPDATE ""{_hostSchemaName}"".""{TableName}""
+                            SET
+                                checksum = '{newChecksum}'
+                            WHERE
+                                name = '{changeName}'";
 
             _sqlExecutor.Execute(script);
         }

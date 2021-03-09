@@ -25,13 +25,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Databases\PostgreSQL\Create.sql" />
-    <None Remove="Databases\PostgreSQL\Delete.sql" />
-    <None Remove="Databases\PostgreSQL\Exists.sql" />
-    <None Remove="Databases\PostgreSQL\UpdateChecksum.sql" />
-    <None Remove="Databases\PostgreSQL\Write.sql" />
-    <None Remove="Databases\SqlServer\Delete.sql" />
-    <None Remove="Databases\SqlServer\UpdateChecksum.sql" />
     <None Include="..\..\sqlshoot-square.png">
       <Pack>True</Pack>
       <PackagePath></PackagePath>
@@ -40,57 +33,6 @@
       <Pack>True</Pack>
       <PackagePath></PackagePath>
     </None>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Include="Databases\PostgreSQL\Create.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Databases\PostgreSQL\Delete.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Databases\PostgreSQL\Exists.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Databases\PostgreSQL\UpdateChecksum.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Databases\PostgreSQL\Write.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Databases\SQLite\Delete.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Include="Databases\SQLite\Create.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Databases\SQLite\Exists.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Databases\SQLite\UpdateChecksum.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Databases\SQLite\Write.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Databases\SqlServer\Create.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Databases\SqlServer\Delete.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Databases\SqlServer\Exists.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Databases\SqlServer\UpdateChecksum.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Databases\SqlServer\Write.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
   </ItemGroup>
 
   <ItemGroup>
