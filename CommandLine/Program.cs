@@ -26,6 +26,9 @@ using Spectre.Console;
 using YamlDotNet.Core;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
+using SchemaSnapshot.DatabaseModel;
+using System.Text;
+using Table = Spectre.Console.Table;
 
 namespace CLI
 {
@@ -180,6 +183,10 @@ namespace CLI
                     ExecuteOverview();
                     break;
 
+                case "snapshot":
+                    ExecuteSnapshot();
+                    break;
+
                 default:
                     PrintHelp();
                     break;
@@ -244,6 +251,17 @@ namespace CLI
             AnsiConsole.Render(table);
 
             PrintErrors(changeOverview.Errors);
+        }
+
+        private static void ExecuteSnapshot()
+        {
+            var schema = _sqlShoot.Snapshot();
+
+            // TODO: Sort the items before placing so they can diff easily
+            var serializer = new Serializer();
+            var yaml = serializer.Serialize(schema);
+
+            AnsiConsole.WriteLine(yaml);
         }
 
         private static void PrintErrors(Errors errors)

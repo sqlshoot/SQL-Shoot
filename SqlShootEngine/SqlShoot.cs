@@ -32,6 +32,8 @@ using SqlShootEngine.Exceptions;
 using SqlShootEngine.Resources;
 using Microsoft.Data.SqlClient;
 using Npgsql;
+using SchemaSnapshot;
+using SchemaSnapshot.DatabaseModel;
 
 namespace SqlShootEngine
 {
@@ -49,6 +51,7 @@ namespace SqlShootEngine
         private ISqlExecutor _sqlExecutor;
         private IDatabaseInteractor _databaseInteractor;
         private IChangeHistoryStore _changeHistoryStore;
+        private SchemaSnapshotCreator _schemaSnapshotCreator = new SchemaSnapshotCreator();
 
         /// <summary>
         /// Construct SQL Shoot. Call SetConfiguration to configure before executing commands
@@ -613,6 +616,32 @@ namespace SqlShootEngine
 
                 throw new SqlShootException("SQL Shoot failed!", e);
             }
+        }
+
+        /// <summary>
+        /// Create a lightweight snapshot of the configured Primary Schema. See documentation for which objects are captured by the snapshot.
+        /// </summary>
+        public Schema Snapshot()
+        {
+            // This implicilty sets the database connection to use the specified DB name
+            // TODO: Make it less hacky - inject SqlExecutor to schema comparison
+            _dbConnection.Open();
+            _sqlExecutor.SetDatabaseContext(_configuration.DatabaseName);
+
+            if (DatabaseEngineUtils.DoesEngineNameMatch(_configuration.DatabaseEngine, DatabaseEngineUtils.PostgreSQL))
+            {
+                return _schemaSnapshotCreator.CreatePostgreSQLSchemaSnapshot(_dbConnection, _configuration.PrimarySchema);
+            }
+            else if (DatabaseEngineUtils.DoesEngineNameMatch(_configuration.DatabaseEngine, DatabaseEngineUtils.SqlServer))
+            {
+                return _schemaSnapshotCreator.CreateSqlServerSchemaSnapshot(_dbConnection, _configuration.PrimarySchema);
+            }
+            else
+            {
+                throw new SqlShootException($"Schema snapshots for database engine '{_configuration.DatabaseEngine}' are not supported.");
+            }
+
+            _dbConnection.Close();
         }
 
         private void WriteToChangeHistoryStore(Change change)
