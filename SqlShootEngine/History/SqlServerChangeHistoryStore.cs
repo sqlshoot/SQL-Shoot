@@ -18,7 +18,7 @@
 #endregion
 using System.Collections.Generic;
 using SqlShootEngine.History;
-using SqlShootEngine.DatabaseInteraction;
+using DatabaseInteraction;
 
 namespace SqlShootEngine.Databases.SqlServer
 {

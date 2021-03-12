@@ -16,24 +16,10 @@
  * along with SQL Shoot. If not, see <https://www.gnu.org/licenses/>.
  */
 #endregion
-using DatabaseInteraction;
-using System.Collections.Generic;
-
-namespace SqlShootEngine.Resources
+namespace DatabaseInteraction
 {
-    internal class ResourceResolverResult
+    internal interface ISchemaNuker
     {
-        public ResourceResolverResult(List<IResource> resolvedResources, List<IResource> duplicateResources, List<string> duplicateScriptPaths)
-        {
-            ResolvedResources = resolvedResources;
-            DuplicateResources = duplicateResources;
-            DuplicateScriptPaths = duplicateScriptPaths;
-        }
-
-        public List<IResource> ResolvedResources { get; }
-
-        public List<IResource> DuplicateResources { get; }
-
-        public List<string> DuplicateScriptPaths { get; }
+        void Nuke(string databaseName, string schemaName, DatabaseVersion databaseVersion);
     }
 }

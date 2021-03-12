@@ -16,24 +16,28 @@
  * along with SQL Shoot. If not, see <https://www.gnu.org/licenses/>.
  */
 #endregion
-using DatabaseInteraction;
-using System.Collections.Generic;
-
-namespace SqlShootEngine.Resources
+namespace DatabaseInteraction
 {
-    internal class ResourceResolverResult
+    public class DatabaseVersion
     {
-        public ResourceResolverResult(List<IResource> resolvedResources, List<IResource> duplicateResources, List<string> duplicateScriptPaths)
+        public string VersionText { get; }
+
+        public bool Supported { get; }
+
+        public int Major { get; }
+
+        public int Minor { get; }
+
+        public int Patch { get; }
+
+        public DatabaseVersion(string version, int major, int minor, int patch, bool supported)
         {
-            ResolvedResources = resolvedResources;
-            DuplicateResources = duplicateResources;
-            DuplicateScriptPaths = duplicateScriptPaths;
+            VersionText = version;
+            Supported = supported;
+
+            Major = major;
+            Minor = minor;
+            Patch = patch;
         }
-
-        public List<IResource> ResolvedResources { get; }
-
-        public List<IResource> DuplicateResources { get; }
-
-        public List<string> DuplicateScriptPaths { get; }
     }
 }

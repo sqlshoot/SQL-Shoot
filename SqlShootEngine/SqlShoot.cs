@@ -21,7 +21,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Text;
-using SqlShootEngine.DatabaseInteraction;
 using SqlShootEngine.History;
 using SqlShootEngine.Databases.PostgreSQL;
 using SqlShootEngine.Databases.SQLite;
@@ -30,6 +29,7 @@ using SqlShootEngine.Exceptions;
 using SqlShootEngine.Resources;
 using SchemaSnapshot;
 using SchemaSnapshot.DatabaseModel;
+using DatabaseInteraction;
 
 namespace SqlShootEngine
 {

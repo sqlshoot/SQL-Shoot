@@ -16,24 +16,26 @@
  * along with SQL Shoot. If not, see <https://www.gnu.org/licenses/>.
  */
 #endregion
-using DatabaseInteraction;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 
-namespace SqlShootEngine.Resources
+namespace DatabaseInteraction.SqlServer
 {
-    internal class ResourceResolverResult
+    internal class SqlServerNonTransactionalSqlDetector : INonTransactionalSqlDetector
     {
-        public ResourceResolverResult(List<IResource> resolvedResources, List<IResource> duplicateResources, List<string> duplicateScriptPaths)
+        private static List<string> nonTransactionalStoredProcedures = new List<string> {
+            "SP_ADDSUBSCRIPTION", "SP_DROPSUBSCRIPTION",
+            "SP_ADDDISTRIBUTOR", "SP_DROPDISTRIBUTOR",
+            "SP_ADDDISTPUBLISHER", "SP_DROPDISTPUBLISHER",
+            "SP_ADDLINKEDSERVER", "SP_DROPLINKEDSERVER",
+            "SP_ADDLINKEDSRVLOGIN", "SP_DROPLINKEDSRVLOGIN",
+            "SP_SERVEROPTION", "SP_REPLICATIONDBOPTION"
+        };
+
+        public bool IsSqlNonTransactional(string sql)
         {
-            ResolvedResources = resolvedResources;
-            DuplicateResources = duplicateResources;
-            DuplicateScriptPaths = duplicateScriptPaths;
+            return nonTransactionalStoredProcedures.Any(s => sql.Contains(s, StringComparison.OrdinalIgnoreCase));
         }
-
-        public List<IResource> ResolvedResources { get; }
-
-        public List<IResource> DuplicateResources { get; }
-
-        public List<string> DuplicateScriptPaths { get; }
     }
 }

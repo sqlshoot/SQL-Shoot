@@ -16,7 +16,7 @@
  * along with SQL Shoot. If not, see <https://www.gnu.org/licenses/>.
  */
 #endregion
-using SqlShootEngine.DatabaseInteraction;
+using DatabaseInteraction;
 using System;
 using System.IO;
 using System.Security.Cryptography;

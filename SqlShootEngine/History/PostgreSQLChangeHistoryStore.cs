@@ -16,11 +16,9 @@
  * along with SQL Shoot. If not, see <https://www.gnu.org/licenses/>.
  */
 #endregion
+using DatabaseInteraction;
 using SqlShootEngine.History;
-using SqlShootEngine.DatabaseInteraction;
 using System.Collections.Generic;
-using System.IO;
-using System.Reflection;
 
 namespace SqlShootEngine.Databases.PostgreSQL
 {

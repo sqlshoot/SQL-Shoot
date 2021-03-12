@@ -42,7 +42,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\DatabaseInteraction\DatabaseInteraction.csproj" />
     <ProjectReference Include="..\SchemaSnapshot\SchemaSnapshot.csproj" />
-    <ProjectReference Include="..\SqlParser\SqlParser.csproj" />
   </ItemGroup>
 </Project>

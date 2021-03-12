@@ -17,8 +17,8 @@
  */
 #endregion
 using System.Collections.Generic;
+using DatabaseInteraction;
 using SqlShootEngine.History;
-using SqlShootEngine.DatabaseInteraction;
 
 namespace SqlShootEngine.Databases.SQLite
 {

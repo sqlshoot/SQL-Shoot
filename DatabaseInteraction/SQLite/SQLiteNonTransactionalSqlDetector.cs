@@ -16,24 +16,13 @@
  * along with SQL Shoot. If not, see <https://www.gnu.org/licenses/>.
  */
 #endregion
-using DatabaseInteraction;
-using System.Collections.Generic;
-
-namespace SqlShootEngine.Resources
+namespace DatabaseInteraction.SQLite
 {
-    internal class ResourceResolverResult
+    internal class SQLiteNonTransactionalSqlDetector : INonTransactionalSqlDetector
     {
-        public ResourceResolverResult(List<IResource> resolvedResources, List<IResource> duplicateResources, List<string> duplicateScriptPaths)
+        public bool IsSqlNonTransactional(string sql)
         {
-            ResolvedResources = resolvedResources;
-            DuplicateResources = duplicateResources;
-            DuplicateScriptPaths = duplicateScriptPaths;
+            return sql.Contains("PRAGMA FOREIGN_KEYS", System.StringComparison.InvariantCultureIgnoreCase);
         }
-
-        public List<IResource> ResolvedResources { get; }
-
-        public List<IResource> DuplicateResources { get; }
-
-        public List<string> DuplicateScriptPaths { get; }
     }
 }

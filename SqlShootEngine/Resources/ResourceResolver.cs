@@ -20,7 +20,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using SqlShootEngine.DatabaseInteraction;
+using DatabaseInteraction;
 
 namespace SqlShootEngine.Resources
 {

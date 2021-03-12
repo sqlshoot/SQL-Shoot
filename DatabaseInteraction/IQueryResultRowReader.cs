@@ -16,24 +16,16 @@
  * along with SQL Shoot. If not, see <https://www.gnu.org/licenses/>.
  */
 #endregion
-using DatabaseInteraction;
-using System.Collections.Generic;
-
-namespace SqlShootEngine.Resources
+namespace DatabaseInteraction
 {
-    internal class ResourceResolverResult
+    public interface IQueryResultRowReader
     {
-        public ResourceResolverResult(List<IResource> resolvedResources, List<IResource> duplicateResources, List<string> duplicateScriptPaths)
-        {
-            ResolvedResources = resolvedResources;
-            DuplicateResources = duplicateResources;
-            DuplicateScriptPaths = duplicateScriptPaths;
-        }
-
-        public List<IResource> ResolvedResources { get; }
-
-        public List<IResource> DuplicateResources { get; }
-
-        public List<string> DuplicateScriptPaths { get; }
+        int GetIndexOfColumn(string columnName);
+        string ReadString(int index);
+        string ReadString(string columnName);
+        int ReadInt(int index);
+        int ReadInt(string columnName);
+        bool ReadBoolean(int index);
+        char ReadChar(int index);
     }
 }
