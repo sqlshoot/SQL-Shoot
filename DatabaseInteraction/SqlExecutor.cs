@@ -115,12 +115,10 @@ namespace DatabaseInteraction
                 command.ExecuteNonQuery();
                 transaction.Commit();
             }
-            catch (Exception)
-            { 
-                // TODO: Throw exception
-                // Logger.WriteLine("Script exection failed - rolling back transaction");
+            catch (Exception e)
+            {
                 transaction.Rollback();
-                throw;
+                throw new ScriptExecutionException("Script execution failed - rolling back transaction", e);
             }
         }
 

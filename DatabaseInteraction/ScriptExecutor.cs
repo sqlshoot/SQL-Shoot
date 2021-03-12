@@ -45,8 +45,6 @@ namespace DatabaseInteraction
                 {
                     if (_nonTransactionalSqlDetector.IsSqlNonTransactional(sql))
                     {
-                        // TODO: Throw exception
-                        //Logger.WriteLine($"Non transactional script detected. Executing {resource.GetName()} in non transactional context");
                         _sqlExecutor.Execute(sql);
                     }
                     else
