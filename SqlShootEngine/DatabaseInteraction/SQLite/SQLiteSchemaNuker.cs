@@ -40,7 +40,7 @@
 using System.Linq;
 using SqlShootEngine.DatabaseInteraction;
 
-namespace SqlShootEngine.Databases.SQLite
+namespace SqlShootEngine.DatabaseInteraction.SQLite
 {
     internal class SQLiteSchemaNuker : ISchemaNuker
     {

@@ -37,10 +37,9 @@
  * along with SQL Shoot. If not, see <https://www.gnu.org/licenses/>.
  */
 #endregion
-using SqlShootEngine.DatabaseInteraction;
 using System.Collections.Generic;
 
-namespace SqlShootEngine.Databases.PostgreSQL
+namespace SqlShootEngine.DatabaseInteraction.PostgreSQL
 {
     internal class PostgreSQLSchemaNuker : ISchemaNuker
     {
@@ -53,7 +52,7 @@ namespace SqlShootEngine.Databases.PostgreSQL
 
         public void Nuke(string databaseName, string schemaName, DatabaseVersion databaseVersion)
         {
-            if (databaseVersion.Major > 9 || (databaseVersion.Major == 9 && databaseVersion.Minor >= 3))
+            if (databaseVersion.Major > 9 || databaseVersion.Major == 9 && databaseVersion.Minor >= 3)
             {
                 DropMaterializedViews(schemaName); // PostgreSQL >= 9.3
             }
@@ -108,7 +107,7 @@ namespace SqlShootEngine.Databases.PostgreSQL
         }
 
 
-    protected void DropMaterializedViews(string schemaName)
+        protected void DropMaterializedViews(string schemaName)
         {
             var sql = $"SELECT relname FROM pg_catalog.pg_class c JOIN pg_namespace n ON n.oid = c.relnamespace WHERE c.relkind = 'm' AND n.nspname = '{schemaName}'";
             var lst = new List<string>();
@@ -145,7 +144,7 @@ namespace SqlShootEngine.Databases.PostgreSQL
 
             _sqlExecutor.Execute(sql, rowReader =>
             {
-               lst.Add($"DROP TYPE IF EXISTS \"{schemaName}\".\"{Quote(rowReader.ReadString(0))}\" CASCADE");
+                lst.Add($"DROP TYPE IF EXISTS \"{schemaName}\".\"{Quote(rowReader.ReadString(0))}\" CASCADE");
             });
 
             ExecuteSqlList(lst);

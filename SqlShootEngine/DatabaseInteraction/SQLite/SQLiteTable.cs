@@ -18,7 +18,7 @@
 #endregion
 using SqlShootEngine.DatabaseInteraction;
 
-namespace SqlShootEngine.Databases.SQLite
+namespace SqlShootEngine.DatabaseInteraction.SQLite
 {
     internal class SQLiteTable
     {

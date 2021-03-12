@@ -18,27 +18,29 @@
 #endregion
 using SqlShootEngine.DatabaseInteraction;
 
-namespace SqlShootEngine.Databases.SQLite
+namespace SqlShootEngine.DatabaseInteraction.SqlServer
 {
-    internal class SQLiteDatabaseVersionProvider : IDatabaseVersionProvider
+    internal class SqlServerDatabaseVersionProvider : IDatabaseVersionProvider
     {
         public DatabaseVersion QueryForDatabaseVersion(ISqlExecutor sqlExecutor)
         {
-            var result = sqlExecutor.ExecuteWithResult("select sqlite_version();");
+            var result = sqlExecutor.ExecuteWithResult("SELECT @@VERSION");
 
             if (result is string versionInfo)
             {
-                var versionParts = versionInfo.Split(".");
-
-                if (versionParts.Length >= 2)
+                if (versionInfo.Contains("Microsoft SQL Server 2019"))
                 {
-                    var major = int.Parse(versionParts[0]);
-                    var minor = int.Parse(versionParts[1]);
+                    return new DatabaseVersion("2019", 2019, 0, 0, true);
+                }
 
-                    if (major == 3 && minor > 9)
-                    {
-                        return new DatabaseVersion(versionInfo, major, minor, 0, true);
-                    }
+                if (versionInfo.Contains("Microsoft SQL Server 2017"))
+                {
+                    return new DatabaseVersion("2017", 2017, 0, 0, true);
+                }
+
+                if (versionInfo.Contains("Microsoft SQL Server 2016"))
+                {
+                    return new DatabaseVersion("2016", 2016, 0, 0, true);
                 }
 
                 return new DatabaseVersion(versionInfo, 0, 0, 0, false);

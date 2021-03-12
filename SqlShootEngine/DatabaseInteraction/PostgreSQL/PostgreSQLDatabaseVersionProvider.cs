@@ -16,9 +16,8 @@
  * along with SQL Shoot. If not, see <https://www.gnu.org/licenses/>.
  */
 #endregion
-using SqlShootEngine.DatabaseInteraction;
 
-namespace SqlShootEngine.Databases.PostgreSQL
+namespace SqlShootEngine.DatabaseInteraction.PostgreSQL
 {
     internal class PostgreSQLDatabaseVersionProvider : IDatabaseVersionProvider
     {

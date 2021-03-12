@@ -25,7 +25,6 @@ using System.Text;
 using SqlShootEngine.DatabaseInteraction;
 using SqlShootEngine.History;
 using SqlShootEngine.Databases.PostgreSQL;
-using SqlShootEngine.Databases.Shared;
 using SqlShootEngine.Databases.SQLite;
 using SqlShootEngine.Databases.SqlServer;
 using SqlShootEngine.Exceptions;
@@ -34,6 +33,9 @@ using Microsoft.Data.SqlClient;
 using Npgsql;
 using SchemaSnapshot;
 using SchemaSnapshot.DatabaseModel;
+using SqlShootEngine.DatabaseInteraction.PostgreSQL;
+using SqlShootEngine.DatabaseInteraction.SqlServer;
+using SqlShootEngine.DatabaseInteraction.SQLite;
 
 namespace SqlShootEngine
 {
@@ -48,6 +50,7 @@ namespace SqlShootEngine
         private Configuration _configuration;
 
         private IDbConnection _dbConnection;
+        // TODO use IDatabaseInteractor
         private ISqlExecutor _sqlExecutor;
         private IDatabaseInteractor _databaseInteractor;
         private IChangeHistoryStore _changeHistoryStore;

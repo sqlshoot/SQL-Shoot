@@ -18,7 +18,7 @@
 #endregion
 using SqlParser;
 
-namespace SqlShootEngine.Databases.PostgreSQL
+namespace SqlShootEngine.DatabaseInteraction.PostgreSQL
 {
     public class PostgreSQLParser : Parser
     {
@@ -26,14 +26,14 @@ namespace SqlShootEngine.Databases.PostgreSQL
         {
             if (parsingContext.secondaryState == SecondaryState.InDollarQuotedLiteral)
             {
-                return parsingContext.currentCharacter == '$' && 
+                return parsingContext.currentCharacter == '$' &&
                        parsingContext.nextCharacters[0] == '$' &&
                        parsingContext.NextNonWhitespaceCharacterIs(';', parsingContext.index + 2);
             }
 
             return parsingContext.currentCharacter == ';';
         }
-        
+
         protected override string GetDelimitedScript(string sql, ParsingContext parsingContext)
         {
             if (parsingContext.secondaryState == SecondaryState.InDollarQuotedLiteral)
@@ -43,7 +43,7 @@ namespace SqlShootEngine.Databases.PostgreSQL
 
             var length = parsingContext.index - parsingContext.scriptStartIndex + 1;
             var script = sql.Substring(parsingContext.scriptStartIndex, length);
-            
+
             parsingContext.scriptStartIndex += length + 1;
             parsingContext.index = parsingContext.scriptStartIndex;
 

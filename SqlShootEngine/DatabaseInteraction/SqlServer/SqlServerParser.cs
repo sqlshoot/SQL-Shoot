@@ -19,7 +19,7 @@
 using SqlParser;
 using System.Text.RegularExpressions;
 
-namespace SqlShootEngine.Databases.SqlServer
+namespace SqlShootEngine.DatabaseInteraction.SqlServer
 {
     public class SqlServerParser : Parser
     {

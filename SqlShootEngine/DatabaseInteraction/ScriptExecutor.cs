@@ -16,10 +16,9 @@
  * along with SQL Shoot. If not, see <https://www.gnu.org/licenses/>.
  */
 #endregion
-using SqlShootEngine.DatabaseInteraction;
 using SqlParser;
 
-namespace SqlShootEngine.Databases.Shared
+namespace SqlShootEngine.DatabaseInteraction
 {
     internal class ScriptExecutor
     {

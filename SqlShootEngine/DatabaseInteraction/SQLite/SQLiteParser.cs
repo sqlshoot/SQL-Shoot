@@ -18,7 +18,7 @@
 #endregion
 using SqlParser;
 
-namespace SqlShootEngine.Databases.SQLite
+namespace SqlShootEngine.DatabaseInteraction.SQLite
 {
     public class SQLiteParser : Parser
     {

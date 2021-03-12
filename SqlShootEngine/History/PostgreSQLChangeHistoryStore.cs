@@ -18,8 +18,6 @@
 #endregion
 using SqlShootEngine.History;
 using SqlShootEngine.DatabaseInteraction;
-using SqlShootEngine.History;
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
@@ -46,6 +44,7 @@ namespace SqlShootEngine.Databases.PostgreSQL
             _hostSchemaName = hostSchemaName;
             _hostDatabaseName = hostDatabaseName;
 
+            //TODO remove
             var scriptDirectory = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Databases", "PostgreSQL");
         }
 

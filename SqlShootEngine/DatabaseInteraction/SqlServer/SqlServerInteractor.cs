@@ -16,10 +16,8 @@
  * along with SQL Shoot. If not, see <https://www.gnu.org/licenses/>.
  */
 #endregion
-using SqlShootEngine.DatabaseInteraction;
-using SqlShootEngine.Databases.Shared;
 
-namespace SqlShootEngine.Databases.SqlServer
+namespace SqlShootEngine.DatabaseInteraction.SqlServer
 {
     internal class SqlServerInteractor : IDatabaseInteractor
     {

@@ -16,31 +16,27 @@
  * along with SQL Shoot. If not, see <https://www.gnu.org/licenses/>.
  */
 #endregion
-using SqlShootEngine.DatabaseInteraction;
-
-namespace SqlShootEngine.Databases.SqlServer
+namespace SqlShootEngine.DatabaseInteraction.SQLite
 {
-    internal class SqlServerDatabaseVersionProvider : IDatabaseVersionProvider
+    internal class SQLiteDatabaseVersionProvider : IDatabaseVersionProvider
     {
         public DatabaseVersion QueryForDatabaseVersion(ISqlExecutor sqlExecutor)
         {
-            var result = sqlExecutor.ExecuteWithResult("SELECT @@VERSION");
+            var result = sqlExecutor.ExecuteWithResult("select sqlite_version();");
 
             if (result is string versionInfo)
             {
-                if (versionInfo.Contains("Microsoft SQL Server 2019"))
-                {
-                    return new DatabaseVersion("2019", 2019, 0, 0, true);
-                }
+                var versionParts = versionInfo.Split(".");
 
-                if (versionInfo.Contains("Microsoft SQL Server 2017"))
+                if (versionParts.Length >= 2)
                 {
-                    return new DatabaseVersion("2017", 2017, 0, 0, true);
-                }
+                    var major = int.Parse(versionParts[0]);
+                    var minor = int.Parse(versionParts[1]);
 
-                if (versionInfo.Contains("Microsoft SQL Server 2016"))
-                {
-                    return new DatabaseVersion("2016", 2016, 0, 0, true);
+                    if (major == 3 && minor > 9)
+                    {
+                        return new DatabaseVersion(versionInfo, major, minor, 0, true);
+                    }
                 }
 
                 return new DatabaseVersion(versionInfo, 0, 0, 0, false);

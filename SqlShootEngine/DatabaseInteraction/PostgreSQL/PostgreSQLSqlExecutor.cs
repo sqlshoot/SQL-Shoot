@@ -16,12 +16,10 @@
  * along with SQL Shoot. If not, see <https://www.gnu.org/licenses/>.
  */
 #endregion
-using SqlShootEngine.DatabaseInteraction;
-using SqlShootEngine.Databases.Shared;
 using System;
 using System.Collections.Generic;
 
-namespace SqlShootEngine.Databases.PostgreSQL
+namespace SqlShootEngine.DatabaseInteraction.PostgreSQL
 {
     internal class PostgreSQLSqlExecutor : ISqlExecutor
     {

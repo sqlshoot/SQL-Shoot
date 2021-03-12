@@ -40,7 +40,7 @@
 using SqlShootEngine.DatabaseInteraction;
 using System.Collections.Generic;
 
-namespace SqlShootEngine.Databases.SqlServer
+namespace SqlShootEngine.DatabaseInteraction.SqlServer
 {
     internal class SqlServerSchemaNuker : ISchemaNuker
     {

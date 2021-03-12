@@ -16,19 +16,18 @@
  * along with SQL Shoot. If not, see <https://www.gnu.org/licenses/>.
  */
 #endregion
-using SqlShootEngine.DatabaseInteraction;
-using SqlShootEngine.Databases.Shared;
 
-namespace SqlShootEngine.Databases.PostgreSQL
+namespace SqlShootEngine.DatabaseInteraction.SQLite
 {
-    internal class PostgreSQLInteractor : IDatabaseInteractor
+    internal class SQLiteInteractor : IDatabaseInteractor
     {
         private readonly ISqlExecutor _sqlExecutor;
         private readonly ISchemaNuker _schemaNuker;
         private readonly IDatabaseVersionProvider _databaseVersionProvider;
         private readonly ScriptExecutor _scriptExecutor;
 
-        public PostgreSQLInteractor(ISqlExecutor sqlExecutor,
+        public SQLiteInteractor(
+            ISqlExecutor sqlExecutor,
             ISchemaNuker schemaNuker,
             IDatabaseVersionProvider databaseVersionProvider,
             ScriptExecutor scriptExecutor)
@@ -41,24 +40,22 @@ namespace SqlShootEngine.Databases.PostgreSQL
 
         public void CreateDatabase(string databaseName)
         {
-            _sqlExecutor.Execute($"CREATE DATABASE \"{databaseName}\"");
+            // No op
         }
 
         public void CreateSchema(string databaseName, string schemaName)
         {
-            _sqlExecutor.SetDatabaseContext(databaseName);
-            _sqlExecutor.Execute($"CREATE SCHEMA IF NOT EXISTS \"{schemaName}\"");
+            // No op
         }
 
         public void DeleteDatabase(string databaseName)
         {
-            _sqlExecutor.Execute($"DROP DATABASE IF EXISTS \"{databaseName}\"");
+            // No op
         }
 
         public void DeleteSchema(string databaseName, string schemaName)
         {
-            _sqlExecutor.SetDatabaseContext(databaseName);
-            _sqlExecutor.Execute($"DROP SCHEMA IF EXISTS \"{schemaName}\"");
+            // No op
         }
 
         public void ExecuteScript(IResource resource)
