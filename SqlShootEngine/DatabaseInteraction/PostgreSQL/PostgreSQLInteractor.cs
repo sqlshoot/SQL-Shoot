@@ -16,6 +16,9 @@
  * along with SQL Shoot. If not, see <https://www.gnu.org/licenses/>.
  */
 #endregion
+using Npgsql;
+using System.Data;
+
 namespace SqlShootEngine.DatabaseInteraction.PostgreSQL
 {
     internal class PostgreSQLInteractor : IDatabaseInteractor
@@ -24,21 +27,30 @@ namespace SqlShootEngine.DatabaseInteraction.PostgreSQL
         private readonly ISchemaNuker _schemaNuker;
         private readonly IDatabaseVersionProvider _databaseVersionProvider;
         private readonly ScriptExecutor _scriptExecutor;
+        private readonly IDbConnection _dbConnection;
 
-        public PostgreSQLInteractor(ISqlExecutor sqlExecutor,
+        public PostgreSQLInteractor(
+            ISqlExecutor sqlExecutor,
             ISchemaNuker schemaNuker,
             IDatabaseVersionProvider databaseVersionProvider,
-            ScriptExecutor scriptExecutor)
+            ScriptExecutor scriptExecutor,
+            IDbConnection dbConnection)
         {
             _sqlExecutor = sqlExecutor;
             _schemaNuker = schemaNuker;
             _databaseVersionProvider = databaseVersionProvider;
             _scriptExecutor = scriptExecutor;
+            _dbConnection = dbConnection;
         }
 
         public void CreateDatabase(string databaseName)
         {
             _sqlExecutor.Execute($"CREATE DATABASE \"{databaseName}\"");
+        }
+
+        public IDbConnection GetDatabaseConnection()
+        {
+            return _dbConnection;
         }
 
         public void CreateSchema(string databaseName, string schemaName)
@@ -61,6 +73,11 @@ namespace SqlShootEngine.DatabaseInteraction.PostgreSQL
         public void ExecuteScript(IResource resource)
         {
             _scriptExecutor.ExecuteScript(resource);
+        }
+
+        public ISqlExecutor GetSqlExecutor()
+        {
+            return _sqlExecutor;
         }
 
         public DatabaseVersion GetVersion()

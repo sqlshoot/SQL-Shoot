@@ -17,8 +17,6 @@
  */
 #endregion
 using System.Collections.Generic;
-using System.IO;
-using System.Reflection;
 using SqlShootEngine.History;
 using SqlShootEngine.DatabaseInteraction;
 
@@ -26,7 +24,7 @@ namespace SqlShootEngine.Databases.SqlServer
 {
     internal class SqlServerChangeHistoryStore : IChangeHistoryStore
     {
-        private readonly ISqlExecutor _sqlExecutor;
+        private readonly IDatabaseInteractor _databaseInteractor;
         private readonly ITimestampProvider _timestampProvider;
         private readonly string _hostSchemaName;
         private readonly string _hostDatabaseName;
@@ -34,25 +32,23 @@ namespace SqlShootEngine.Databases.SqlServer
         private const string TableName = "SqlShootChangeHistory";
 
         public SqlServerChangeHistoryStore(
-            ISqlExecutor sqlExecutor,
+            IDatabaseInteractor databaseInteractor,
             ITimestampProvider timestampProvider,
             string hostSchemaName,
             string hostDatabaseName)
         {
-            _sqlExecutor = sqlExecutor;
+            _databaseInteractor = databaseInteractor;
             _timestampProvider = timestampProvider;
             _hostSchemaName = hostSchemaName;
             _hostDatabaseName = hostDatabaseName;
-
-            var scriptDirectory = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Databases", "SqlServer");
         }
 
         public bool Exists()
         {
             var script = $"SELECT *  FROM INFORMATION_SCHEMA.TABLES  WHERE TABLE_SCHEMA = '{_hostSchemaName}' AND  TABLE_NAME = '{TableName}'";
 
-            _sqlExecutor.SetDatabaseContext(_hostDatabaseName);
-            var result = _sqlExecutor.ExecuteWithResult(script);
+            _databaseInteractor.SetDatabaseContext(_hostDatabaseName);
+            var result = _databaseInteractor.GetSqlExecutor().ExecuteWithResult(script);
 
             return result != null;
         }
@@ -67,16 +63,16 @@ namespace SqlShootEngine.Databases.SqlServer
 	                        [state] [nvarchar](max)NOT NULL,
 	                        [timestamp] [nvarchar](max)NOT NULL)";
 
-            _sqlExecutor.SetDatabaseContext(_hostDatabaseName);
-            _sqlExecutor.Execute(script);
+            _databaseInteractor.SetDatabaseContext(_hostDatabaseName);
+            _databaseInteractor.GetSqlExecutor().Execute(script);
         }
 
         public ChangeHistory Read()
         {
             var list = new List<Change>();
 
-            _sqlExecutor.SetDatabaseContext(_hostDatabaseName);
-            _sqlExecutor.Execute($"SELECT * FROM [{_hostSchemaName}].[{TableName}]", reader =>
+            _databaseInteractor.SetDatabaseContext(_hostDatabaseName);
+            _databaseInteractor.GetSqlExecutor().Execute($"SELECT * FROM [{_hostSchemaName}].[{TableName}]", reader =>
             {
                 var name = reader.ReadString("name");
                 var checksum = reader.ReadString("checksum");
@@ -110,8 +106,8 @@ namespace SqlShootEngine.Databases.SqlServer
                             ,'{change.State}'
                             ,'{timestamp}')";
 
-            _sqlExecutor.SetDatabaseContext(_hostDatabaseName);
-            _sqlExecutor.Execute(script);
+            _databaseInteractor.SetDatabaseContext(_hostDatabaseName);
+            _databaseInteractor.GetSqlExecutor().Execute(script);
         }
 
         public void Delete(Change change)
@@ -124,8 +120,8 @@ namespace SqlShootEngine.Databases.SqlServer
                                 type LIKE '%{change.Type}%' AND
                                 state LIKE '{change.State}%'";
 
-            _sqlExecutor.SetDatabaseContext(_hostDatabaseName);
-            _sqlExecutor.Execute(script);
+            _databaseInteractor.SetDatabaseContext(_hostDatabaseName);
+            _databaseInteractor.GetSqlExecutor().Execute(script);
         }
 
         public void UpdateChecksum(string changeName, string newChecksum)
@@ -136,8 +132,8 @@ namespace SqlShootEngine.Databases.SqlServer
                             WHERE
                                 name = '{changeName}'";
 
-            _sqlExecutor.SetDatabaseContext(_hostDatabaseName);
-            _sqlExecutor.Execute(script);
+            _databaseInteractor.SetDatabaseContext(_hostDatabaseName);
+            _databaseInteractor.GetSqlExecutor().Execute(script);
         }
     }
 }

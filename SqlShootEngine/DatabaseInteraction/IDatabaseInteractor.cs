@@ -16,9 +16,11 @@
  * along with SQL Shoot. If not, see <https://www.gnu.org/licenses/>.
  */
 #endregion
+using System.Data;
+
 namespace SqlShootEngine.DatabaseInteraction
 {
-    internal interface IDatabaseInteractor
+    public interface IDatabaseInteractor
     {
         void CreateDatabase(string databaseName);
 
@@ -35,5 +37,9 @@ namespace SqlShootEngine.DatabaseInteraction
         DatabaseVersion GetVersion();
 
         void SetDatabaseContext(string databaseName);
+
+        IDbConnection GetDatabaseConnection();
+
+        ISqlExecutor GetSqlExecutor();
     }
 }

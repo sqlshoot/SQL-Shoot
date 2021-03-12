@@ -16,6 +16,8 @@
  * along with SQL Shoot. If not, see <https://www.gnu.org/licenses/>.
  */
 #endregion
+using Microsoft.Data.SqlClient;
+using System.Data;
 
 namespace SqlShootEngine.DatabaseInteraction.SqlServer
 {
@@ -25,17 +27,20 @@ namespace SqlShootEngine.DatabaseInteraction.SqlServer
         private readonly ISchemaNuker _schemaNuker;
         private readonly IDatabaseVersionProvider _databaseVersionProvider;
         private readonly ScriptExecutor _scriptExecutor;
+        private readonly IDbConnection _dbConnection;
 
         public SqlServerInteractor(
             ISqlExecutor sqlExecutor,
             ISchemaNuker schemaNuker,
             IDatabaseVersionProvider databaseVersionProvider,
-            ScriptExecutor scriptExecutor)
+            ScriptExecutor scriptExecutor,
+            IDbConnection dbConnection)
         {
             _sqlExecutor = sqlExecutor;
             _schemaNuker = schemaNuker;
             _databaseVersionProvider = databaseVersionProvider;
             _scriptExecutor = scriptExecutor;
+            _dbConnection = dbConnection;
         }
 
         public void CreateDatabase(string databaseName)
@@ -92,6 +97,16 @@ namespace SqlShootEngine.DatabaseInteraction.SqlServer
         public void SetDatabaseContext(string databaseName)
         {
             _sqlExecutor.SetDatabaseContext(databaseName);
+        }
+
+        public IDbConnection GetDatabaseConnection()
+        {
+            return _dbConnection;
+        }
+
+        public ISqlExecutor GetSqlExecutor()
+        {
+            return _sqlExecutor;
         }
     }
 }

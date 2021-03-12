@@ -17,8 +17,6 @@
  */
 #endregion
 using System.Collections.Generic;
-using System.IO;
-using System.Reflection;
 using SqlShootEngine.History;
 using SqlShootEngine.DatabaseInteraction;
 
@@ -26,26 +24,24 @@ namespace SqlShootEngine.Databases.SQLite
 {
     internal class SQLiteChangeHistoryStore : IChangeHistoryStore
     {
-        private readonly ISqlExecutor _sqlExecutor;
+        private readonly IDatabaseInteractor _databaseInteractor;
         private readonly ITimestampProvider _timestampProvider;
 
         private const string TableName = "SqlShootChangeHistory";
 
         public SQLiteChangeHistoryStore(
-            ISqlExecutor sqlExecutor,
+            IDatabaseInteractor databaseInteractor,
             ITimestampProvider timeStampProvider)
         {
-            _sqlExecutor = sqlExecutor;
+            _databaseInteractor = databaseInteractor;
             _timestampProvider = timeStampProvider;
-
-            var scriptDirectory = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Databases", "SQLite");
         }
 
         public bool Exists()
         {
             var script = $"SELECT name FROM sqlite_master WHERE type = 'table' AND name = '{TableName}'";
 
-            var result = _sqlExecutor.ExecuteWithResult(script);
+            var result = _databaseInteractor.GetSqlExecutor().ExecuteWithResult(script);
 
             return result != null;
         }
@@ -61,14 +57,14 @@ namespace SqlShootEngine.Databases.SQLite
 	                        [timestamp] [TEXT]
                         )";
 
-            _sqlExecutor.Execute(script);
+            _databaseInteractor.GetSqlExecutor().Execute(script);
         }
 
         public ChangeHistory Read()
         {
             var list = new List<Change>();
 
-            _sqlExecutor.Execute($"SELECT * FROM {TableName}", reader =>
+            _databaseInteractor.GetSqlExecutor().Execute($"SELECT * FROM {TableName}", reader =>
             {
                 var name = reader.ReadString("name");
                 var checksum = reader.ReadString("checksum");
@@ -102,7 +98,7 @@ namespace SqlShootEngine.Databases.SQLite
                             , '{change.State}'
                             , '{timestamp}')";
 
-            _sqlExecutor.Execute(script);
+            _databaseInteractor.GetSqlExecutor().Execute(script);
         }
 
         public void Delete(Change change)
@@ -115,7 +111,7 @@ namespace SqlShootEngine.Databases.SQLite
                                 type LIKE '%{change.Type}%' AND
                                 state LIKE '%{change.State}%'";
 
-            _sqlExecutor.Execute(script);
+            _databaseInteractor.GetSqlExecutor().Execute(script);
         }
 
         public void UpdateChecksum(string changeName, string newChecksum)
@@ -125,7 +121,8 @@ namespace SqlShootEngine.Databases.SQLite
                                 checksum = '{newChecksum}'
                             WHERE
                                 name = '{changeName}";
-            _sqlExecutor.Execute(script);
+
+            _databaseInteractor.GetSqlExecutor().Execute(script);
         }
     }
 }

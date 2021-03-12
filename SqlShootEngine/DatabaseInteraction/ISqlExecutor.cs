@@ -21,7 +21,7 @@ using System.Collections.Generic;
 
 namespace SqlShootEngine.DatabaseInteraction
 {
-    internal interface ISqlExecutor
+    public interface ISqlExecutor
     {
         void Execute(string sql);
 

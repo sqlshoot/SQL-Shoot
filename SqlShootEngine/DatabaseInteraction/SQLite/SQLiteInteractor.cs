@@ -17,6 +17,9 @@
  */
 #endregion
 
+using System.Data;
+using System.Data.SQLite;
+
 namespace SqlShootEngine.DatabaseInteraction.SQLite
 {
     internal class SQLiteInteractor : IDatabaseInteractor
@@ -25,22 +28,30 @@ namespace SqlShootEngine.DatabaseInteraction.SQLite
         private readonly ISchemaNuker _schemaNuker;
         private readonly IDatabaseVersionProvider _databaseVersionProvider;
         private readonly ScriptExecutor _scriptExecutor;
+        private readonly IDbConnection _dbConnection;
 
         public SQLiteInteractor(
             ISqlExecutor sqlExecutor,
             ISchemaNuker schemaNuker,
             IDatabaseVersionProvider databaseVersionProvider,
-            ScriptExecutor scriptExecutor)
+            ScriptExecutor scriptExecutor,
+            IDbConnection dbConnection)
         {
             _sqlExecutor = sqlExecutor;
             _schemaNuker = schemaNuker;
             _databaseVersionProvider = databaseVersionProvider;
             _scriptExecutor = scriptExecutor;
+            _dbConnection = dbConnection;
         }
 
         public void CreateDatabase(string databaseName)
         {
             // No op
+        }
+
+        public IDbConnection GetDatabaseConnection()
+        {
+            return _dbConnection;
         }
 
         public void CreateSchema(string databaseName, string schemaName)
@@ -61,6 +72,11 @@ namespace SqlShootEngine.DatabaseInteraction.SQLite
         public void ExecuteScript(IResource resource)
         {
             _scriptExecutor.ExecuteScript(resource);
+        }
+
+        public ISqlExecutor GetSqlExecutor()
+        {
+            return _sqlExecutor;
         }
 
         public DatabaseVersion GetVersion()

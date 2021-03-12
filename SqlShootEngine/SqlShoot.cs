@@ -19,7 +19,6 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.SQLite;
 using System.Linq;
 using System.Text;
 using SqlShootEngine.DatabaseInteraction;
@@ -29,13 +28,8 @@ using SqlShootEngine.Databases.SQLite;
 using SqlShootEngine.Databases.SqlServer;
 using SqlShootEngine.Exceptions;
 using SqlShootEngine.Resources;
-using Microsoft.Data.SqlClient;
-using Npgsql;
 using SchemaSnapshot;
 using SchemaSnapshot.DatabaseModel;
-using SqlShootEngine.DatabaseInteraction.PostgreSQL;
-using SqlShootEngine.DatabaseInteraction.SqlServer;
-using SqlShootEngine.DatabaseInteraction.SQLite;
 
 namespace SqlShootEngine
 {
@@ -80,25 +74,17 @@ namespace SqlShootEngine
 
             var timestampProvider = new TimestampProvider();
 
+            var databaseInteractorFactory = new DatabaseInteractorFactory();
+
             if (DatabaseEngineUtils.DoesEngineNameMatch(configuration.DatabaseEngine, DatabaseEngineUtils.SqlServer))
             {
-                _dbConnection = new SqlConnection(connectionStringWithCredentials);
-                var sqlExecutor = new SqlExecutor(_dbConnection);
-
-                var scriptExecutor = new ScriptExecutor(
-                    sqlExecutor,
-                    new SqlServerParser(),
-                    new SqlServerNonTransactionalSqlDetector(),
-                    _configuration.RunScriptsInTransactions);
-
-                _databaseInteractor = new SqlServerInteractor(
-                    sqlExecutor,
-                    new SqlServerSchemaNuker(sqlExecutor),
-                    new SqlServerDatabaseVersionProvider(),
-                    scriptExecutor);
+                _databaseInteractor = databaseInteractorFactory
+                    .CreateSQLServerDatabaseInteractor(
+                    connectionStringWithCredentials,
+                    configuration.RunScriptsInTransactions);
 
                 _changeHistoryStore = new SqlServerChangeHistoryStore(
-                    sqlExecutor,
+                    _databaseInteractor,
                     timestampProvider,
                     configuration.PrimarySchema,
                     configuration.DatabaseName);
@@ -106,48 +92,23 @@ namespace SqlShootEngine
 
             if (DatabaseEngineUtils.DoesEngineNameMatch(configuration.DatabaseEngine, DatabaseEngineUtils.SQLite))
             {
-                _dbConnection = new SQLiteConnection(connectionStringWithCredentials);
-                var sqlExecutor = new SQLiteSqlExecutor(new SqlExecutor(_dbConnection));
+                _databaseInteractor = databaseInteractorFactory
+                    .CreateSQLiteDatabaseInteractor(
+                    connectionStringWithCredentials,
+                    configuration.RunScriptsInTransactions);
 
-                var scriptExecutor = new ScriptExecutor(
-                    sqlExecutor,
-                    new SQLiteParser(),
-                    new SQLiteNonTransactionalSqlDetector(),
-                    _configuration.RunScriptsInTransactions);
-
-                _databaseInteractor = new SQLiteInteractor(
-                    sqlExecutor,
-                    new SQLiteSchemaNuker(sqlExecutor),
-                    new SQLiteDatabaseVersionProvider(),
-                    scriptExecutor);
-
-                _changeHistoryStore = new SQLiteChangeHistoryStore(sqlExecutor, timestampProvider);
+                _changeHistoryStore = new SQLiteChangeHistoryStore(_databaseInteractor, timestampProvider);
             }
 
             if (DatabaseEngineUtils.DoesEngineNameMatch(configuration.DatabaseEngine, DatabaseEngineUtils.PostgreSQL))
             {
-                _dbConnection = new NpgsqlConnection(connectionStringWithCredentials);
-                var sqlExecutor = new PostgreSQLSqlExecutor(new SqlExecutor(_dbConnection));
-                var databaseVersionProvider = new PostgreSQLDatabaseVersionProvider();
-
-                _dbConnection.Open();
-                var databaseVersion = databaseVersionProvider.QueryForDatabaseVersion(sqlExecutor);
-                _dbConnection.Close();
-
-                var scriptExecutor = new ScriptExecutor(
-                    sqlExecutor,
-                    new PostgreSQLParser(),
-                    new PostgreSQLNonTransactionalSqlDetector(databaseVersion),
+                _databaseInteractor = databaseInteractorFactory
+                    .CreatePostgreSQLDatabaseInteractor(
+                    connectionStringWithCredentials,
                     configuration.RunScriptsInTransactions);
-                
-                _databaseInteractor = new PostgreSQLInteractor(
-                    sqlExecutor,
-                    new PostgreSQLSchemaNuker(sqlExecutor),
-                    databaseVersionProvider,
-                    scriptExecutor);
 
                 _changeHistoryStore = new PostgreSQLChangeHistoryStore(
-                    sqlExecutor,
+                    _databaseInteractor,
                     timestampProvider,
                     configuration.PrimarySchema,
                     configuration.DatabaseName);

@@ -18,7 +18,7 @@
 #endregion
 namespace SqlShootEngine.DatabaseInteraction
 {
-    internal interface IQueryResultRowReader
+    public interface IQueryResultRowReader
     {
         int GetIndexOfColumn(string columnName);
         string ReadString(int index);

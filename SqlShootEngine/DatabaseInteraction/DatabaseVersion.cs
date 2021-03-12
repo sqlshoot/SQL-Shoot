@@ -18,7 +18,7 @@
 #endregion
 namespace SqlShootEngine.DatabaseInteraction
 {
-    internal class DatabaseVersion
+    public class DatabaseVersion
     {
         public string VersionText { get; }
 

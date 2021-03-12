@@ -26,7 +26,7 @@ namespace SqlShootEngine.Databases.PostgreSQL
 {
     internal class PostgreSQLChangeHistoryStore : IChangeHistoryStore
     {
-        private readonly ISqlExecutor _sqlExecutor;
+        private readonly IDatabaseInteractor _databaseInteractor;
         private readonly ITimestampProvider _timestampProvider;
         private readonly string _hostSchemaName;
         private readonly string _hostDatabaseName;
@@ -34,18 +34,15 @@ namespace SqlShootEngine.Databases.PostgreSQL
         private const string TableName = "SqlShootChangeHistory";
 
         public PostgreSQLChangeHistoryStore(
-            ISqlExecutor sqlExecutor,
+            IDatabaseInteractor databaseInteractor,
             ITimestampProvider timestampProvider,
             string hostSchemaName,
             string hostDatabaseName)
         {
-            _sqlExecutor = sqlExecutor;
+            _databaseInteractor = databaseInteractor;
             _timestampProvider = timestampProvider;
             _hostSchemaName = hostSchemaName;
             _hostDatabaseName = hostDatabaseName;
-
-            //TODO remove
-            var scriptDirectory = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Databases", "PostgreSQL");
         }
 
         public bool Exists()
@@ -59,7 +56,7 @@ namespace SqlShootEngine.Databases.PostgreSQL
 
             var result = false;
             
-            _sqlExecutor.Execute(script, rowReader =>
+            _databaseInteractor.GetSqlExecutor().Execute(script, rowReader =>
             {
                 result = rowReader.ReadBoolean(0);
             });
@@ -78,14 +75,14 @@ namespace SqlShootEngine.Databases.PostgreSQL
                             timestamp varchar NOT NULL
                         )";
 
-            _sqlExecutor.Execute(script);
+            _databaseInteractor.GetSqlExecutor().Execute(script);
         }
 
         public ChangeHistory Read()
         {
             var list = new List<Change>();
 
-            _sqlExecutor.Execute($"SELECT * FROM \"{_hostSchemaName}\".\"{TableName}\"", reader =>
+            _databaseInteractor.GetSqlExecutor().Execute($"SELECT * FROM \"{_hostSchemaName}\".\"{TableName}\"", reader =>
             {
                 var name = reader.ReadString("name");
                 var checksum = reader.ReadString("checksum");
@@ -119,7 +116,7 @@ namespace SqlShootEngine.Databases.PostgreSQL
                             ,'{change.State}'
                             ,'{timestamp}')";
 
-            _sqlExecutor.Execute(script);
+            _databaseInteractor.GetSqlExecutor().Execute(script);
         }
 
         public void Delete(Change change)
@@ -132,7 +129,7 @@ namespace SqlShootEngine.Databases.PostgreSQL
                                 type = '{change.Type}' AND
                                 state = '{change.State}';";
 
-            _sqlExecutor.Execute(script);
+            _databaseInteractor.GetSqlExecutor().Execute(script);
         }
 
         public void UpdateChecksum(string changeName, string newChecksum)
@@ -143,7 +140,7 @@ namespace SqlShootEngine.Databases.PostgreSQL
                             WHERE
                                 name = '{changeName}'";
 
-            _sqlExecutor.Execute(script);
+            _databaseInteractor.GetSqlExecutor().Execute(script);
         }
     }
 }
