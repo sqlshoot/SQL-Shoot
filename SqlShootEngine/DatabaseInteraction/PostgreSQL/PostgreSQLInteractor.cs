@@ -72,5 +72,10 @@ namespace SqlShootEngine.DatabaseInteraction.PostgreSQL
         {
             _schemaNuker.Nuke(databaseName, schemaName, GetVersion());
         }
+
+        public void SetDatabaseContext(string databaseName)
+        {
+            _sqlExecutor.SetDatabaseContext(databaseName);
+        }
     }
 }

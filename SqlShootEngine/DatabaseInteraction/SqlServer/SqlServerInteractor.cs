@@ -88,5 +88,10 @@ namespace SqlShootEngine.DatabaseInteraction.SqlServer
         {
             return _databaseVersionProvider.QueryForDatabaseVersion(_sqlExecutor);
         }
+
+        public void SetDatabaseContext(string databaseName)
+        {
+            _sqlExecutor.SetDatabaseContext(databaseName);
+        }
     }
 }

@@ -72,5 +72,10 @@ namespace SqlShootEngine.DatabaseInteraction.SQLite
         {
             _schemaNuker.Nuke(databaseName, schemaName, GetVersion());
         }
+
+        public void SetDatabaseContext(string databaseName)
+        {
+            _sqlExecutor.SetDatabaseContext(databaseName);
+        }
     }
 }

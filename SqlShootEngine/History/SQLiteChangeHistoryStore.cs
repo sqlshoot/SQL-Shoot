@@ -21,7 +21,6 @@ using System.IO;
 using System.Reflection;
 using SqlShootEngine.History;
 using SqlShootEngine.DatabaseInteraction;
-using SqlShootEngine.History;
 
 namespace SqlShootEngine.Databases.SQLite
 {

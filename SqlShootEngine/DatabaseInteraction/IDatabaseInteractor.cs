@@ -33,5 +33,7 @@ namespace SqlShootEngine.DatabaseInteraction
         void NukeSchema(string databaseName, string schemaName);
 
         DatabaseVersion GetVersion();
+
+        void SetDatabaseContext(string databaseName);
     }
 }
