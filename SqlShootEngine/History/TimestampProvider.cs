@@ -16,10 +16,15 @@
  * along with SQL Shoot. If not, see <https://www.gnu.org/licenses/>.
  */
 #endregion
-namespace SqlShootEngine.Databases.Shared
+using System;
+
+namespace SqlShootEngine.History
 {
-    internal interface ITimestampProvider
+    internal class TimestampProvider : ITimestampProvider
     {
-        string GetTimestampForCurrentMoment();
+        public string GetTimestampForCurrentMoment()
+        {
+            return DateTime.Now.ToString();
+        }
     }
 }

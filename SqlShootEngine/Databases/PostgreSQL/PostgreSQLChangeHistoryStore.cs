@@ -16,9 +16,9 @@
  * along with SQL Shoot. If not, see <https://www.gnu.org/licenses/>.
  */
 #endregion
+using SqlShootEngine.History;
 using SqlShootEngine.DatabaseInteraction;
-using SqlShootEngine.DatabaseInteraction.ChangeHistory;
-using SqlShootEngine.Databases.Shared;
+using SqlShootEngine.History;
 using System;
 using System.Collections.Generic;
 using System.IO;

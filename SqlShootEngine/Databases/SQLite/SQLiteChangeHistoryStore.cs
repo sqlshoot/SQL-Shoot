@@ -19,9 +19,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+using SqlShootEngine.History;
 using SqlShootEngine.DatabaseInteraction;
-using SqlShootEngine.DatabaseInteraction.ChangeHistory;
-using SqlShootEngine.Databases.Shared;
+using SqlShootEngine.History;
 
 namespace SqlShootEngine.Databases.SQLite
 {

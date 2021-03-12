@@ -16,10 +16,11 @@
  * along with SQL Shoot. If not, see <https://www.gnu.org/licenses/>.
  */
 #endregion
+using SqlShootEngine.History;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace SqlShootEngine.DatabaseInteraction.ChangeHistory
+namespace SqlShootEngine.History
 {
     public class ChangeHistory
     {
@@ -34,7 +35,7 @@ namespace SqlShootEngine.DatabaseInteraction.ChangeHistory
                 var change = changes[i];
 
                 var isRevertedLater = changes.Skip(i + 1).Any(c => c.Reverts(change));
-                var isAppliedLater = changes.Skip(i + 1).Any(c => c.IsTheSameAs(change) || (c.Type.Equals(ResourceTypes.OnChangeScript) && c.Name.Equals(change.Name)));
+                var isAppliedLater = changes.Skip(i + 1).Any(c => c.IsTheSameAs(change) || c.Type.Equals(ResourceTypes.OnChangeScript) && c.Name.Equals(change.Name));
 
                 if (isRevertedLater && !isAppliedLater)
                 {
@@ -78,7 +79,7 @@ namespace SqlShootEngine.DatabaseInteraction.ChangeHistory
 
         public bool HasAppliedChangeWithThisNameButWithoutMatchingChecksum(string changeName, string checksum)
         {
-            return Changes.Any(c => c.Name.Equals(changeName) && (c.State.Equals(ChangeStates.Applied)) && !c.Checksum.Equals(checksum));
+            return Changes.Any(c => c.Name.Equals(changeName) && c.State.Equals(ChangeStates.Applied) && !c.Checksum.Equals(checksum));
         }
     }
 }

@@ -16,16 +16,17 @@
  * along with SQL Shoot. If not, see <https://www.gnu.org/licenses/>.
  */
 #endregion
-using SqlShootEngine.Databases.Shared;
-using System;
+using SqlShootEngine.History;
 
-namespace SqlShootEngine.DatabaseInteraction.ChangeHistory
+namespace SqlShootEngine.History
 {
-    internal class TimestampProvider : ITimestampProvider
+    internal interface IChangeHistoryStore
     {
-        public string GetTimestampForCurrentMoment()
-        {
-            return DateTime.Now.ToString();
-        }
+        bool Exists();
+        void Create();
+        ChangeHistory Read();
+        void Write(Change change);
+        void Delete(Change change);
+        void UpdateChecksum(string changeName, string newChecksum);
     }
 }

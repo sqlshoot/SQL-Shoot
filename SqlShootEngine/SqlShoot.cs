@@ -23,7 +23,7 @@ using System.Data.SQLite;
 using System.Linq;
 using System.Text;
 using SqlShootEngine.DatabaseInteraction;
-using SqlShootEngine.DatabaseInteraction.ChangeHistory;
+using SqlShootEngine.History;
 using SqlShootEngine.Databases.PostgreSQL;
 using SqlShootEngine.Databases.Shared;
 using SqlShootEngine.Databases.SQLite;

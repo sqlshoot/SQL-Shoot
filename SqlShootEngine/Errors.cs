@@ -18,8 +18,8 @@
 #endregion
 using System.Collections.Generic;
 using System.Linq;
+using SqlShootEngine.History;
 using SqlShootEngine.DatabaseInteraction;
-using SqlShootEngine.DatabaseInteraction.ChangeHistory;
 
 namespace SqlShootEngine
 {
