@@ -26,8 +26,6 @@ using Spectre.Console;
 using YamlDotNet.Core;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
-using SchemaSnapshot.DatabaseModel;
-using System.Text;
 using Table = Spectre.Console.Table;
 
 namespace CLI
@@ -156,10 +154,10 @@ namespace CLI
 
             _sqlShoot.SetConfiguration(configuration);
 
-            ExecuteCommand(clientConfiguration.CommandLineConfiguration.CommandName, configuration);
+            ExecuteCommand(clientConfiguration.CommandLineConfiguration.CommandName);
         }
 
-        private static void ExecuteCommand(string commandName, Configuration configuration)
+        private static void ExecuteCommand(string commandName)
         {
             switch (commandName)
             {
