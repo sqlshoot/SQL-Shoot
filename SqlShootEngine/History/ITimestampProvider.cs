@@ -16,7 +16,6 @@
  * along with SQL Shoot. If not, see <https://www.gnu.org/licenses/>.
  */
 #endregion
-
 namespace SqlShootEngine.History
 {
     internal interface ITimestampProvider

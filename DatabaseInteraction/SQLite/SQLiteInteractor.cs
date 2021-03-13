@@ -16,7 +16,6 @@
  * along with SQL Shoot. If not, see <https://www.gnu.org/licenses/>.
  */
 #endregion
-
 using System.Data;
 using System.Data.SQLite;
 
