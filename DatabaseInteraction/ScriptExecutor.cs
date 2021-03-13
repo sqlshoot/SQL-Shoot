@@ -17,6 +17,7 @@
  */
 #endregion
 using SqlParser;
+using System;
 
 namespace DatabaseInteraction
 {
@@ -41,20 +42,26 @@ namespace DatabaseInteraction
 
             foreach (var sql in sqlBatches)
             {
-                if (_useTransactions)
+                try
                 {
-                    if (_nonTransactionalSqlDetector.IsSqlNonTransactional(sql))
+                    if (_useTransactions)
                     {
-                        _sqlExecutor.Execute(sql);
+                        if (_nonTransactionalSqlDetector.IsSqlNonTransactional(sql))
+                        {
+                            _sqlExecutor.Execute(sql);
+                        }
+                        else
+                        {
+                            _sqlExecutor.ExecuteInTransaction(sql);
+                        }
                     }
                     else
                     {
-                        _sqlExecutor.ExecuteInTransaction(sql);
+                        _sqlExecutor.Execute(sql);
                     }
-                }
-                else
+                } catch (Exception e)
                 {
-                    _sqlExecutor.Execute(sql);
+                    throw new ScriptExecutionException($"Failed to execute SQL batch\n\n{sql}\n\n{e.Message}", e);
                 }
             }
         }

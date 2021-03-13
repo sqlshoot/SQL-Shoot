@@ -1,90 +1,107 @@
-﻿using System.Collections.Generic;
-using System.Data;
+﻿using DatabaseInteraction;
+using System.Collections.Generic;
+using System.Linq;
 using Constraint = SchemaSnapshot.DatabaseModel.Constraint;
 
 namespace SchemaSnapshot.Postgres
 {
     internal class PostgresConstraintLoader : IConstraintLoader
     {
-        public List<Constraint> LoadConstraintsAndIndexesInSchema(string schemaName, IDbCommand dbCommand)
+        public List<Constraint> LoadConstraintsAndIndexesInSchema(string schemaName, ISqlExecutor sqlExecutor)
         {
+            var constraintsFirstPass = new List<PostgresConstraint>();
+
+            var constraintsToColumnsSql = $@"
+					select pgc.conname as constraint_name,
+                       ccu.table_schema as table_schema,
+                       ccu.table_name,
+                       ccu.column_name,
+                       pg_get_constraintdef(pgc.oid)
+                from pg_constraint pgc
+                join pg_namespace nsp on nsp.oid = pgc.connamespace
+                join pg_class  cls on pgc.conrelid = cls.oid
+                left join information_schema.constraint_column_usage ccu
+                          on pgc.conname = ccu.constraint_name
+                          and nsp.nspname = ccu.constraint_schema
+                and table_schema = '{schemaName}'";
+
+            sqlExecutor.Execute(constraintsToColumnsSql, reader =>
+            {
+                var tableName = reader.ReadString("table_name");
+                var name = reader.ReadString("constraint_name");
+                var columnName = reader.ReadString("column_name");
+                var definition = reader.ReadString("pg_get_constraintdef");
+
+                var constraint = new PostgresConstraint(
+                    tableName,
+                    name,
+                    columnName,
+                    string.Empty,
+                    definition);
+
+                constraintsFirstPass.Add(constraint);
+            });
+
             var constraints = new List<Constraint>();
 
-            dbCommand.CommandText = $@"
-					select 
-						s.name as schemaName,
-						t.name as tableName, 
-						t.baseType,
-						i.name as indexName, 
-						c.name as columnName,
-						i.is_primary_key, 
-						i.is_unique_constraint,
-						i.is_unique, 
-						i.type_desc,
-						i.filter_definition,
-						isnull(ic.is_included_column, 0) as is_included_column,
-						ic.is_descending_key,
-						i.type
-					from (
-						select object_id, name, schema_id, 'T' as baseType
-						from   sys.tables
-						union
-						select object_id, name, schema_id, 'V' as baseType
-						from   sys.views
-						union
-						select type_table_object_id, name, schema_id, 'TVT' as baseType
-						from   sys.table_types
-						) t
-						inner join sys.indexes i on i.object_id = t.object_id
-						inner join sys.index_columns ic on ic.object_id = t.object_id
-							and ic.index_id = i.index_id
-						inner join sys.columns c on c.object_id = t.object_id
-							and c.column_id = ic.column_id
-						inner join sys.schemas s on s.schema_id = t.schema_id
-					where i.type_desc != 'HEAP'
-                    and s.name = '{schemaName}'
-                    and baseType = 'T'
-					order by s.name, t.name, i.name, ic.key_ordinal, ic.index_column_id";
+            var constraintsSql = $@"
+                SELECT
+                    table_name,
+                    constraint_name,
+                    constraint_type
+                FROM
+                  INFORMATION_SCHEMA.TABLE_CONSTRAINTS
+                WHERE
+                    table_schema = '{schemaName}'";
 
-            using (var dr = dbCommand.ExecuteReader())
+            sqlExecutor.Execute(constraintsSql, reader =>
             {
-                while (dr.Read())
+                var tableName = reader.ReadString("table_name");
+                var name = reader.ReadString("constraint_name");
+                var type = reader.ReadString("constraint_type");
+
+                var constraint = constraintsFirstPass.FirstOrDefault(c => c.TableName == tableName && c.Name == name);
+
+                // No matching constraint? Who knows...
+                if (constraint != null)
                 {
-                    var tableName = (string)dr["tableName"];
-                    var indexName = (string)dr["indexName"];
-                    var columnName = (string)dr["columnName"];
-                    var isPrimaryKey = (bool)dr["isPrimaryKey"];
-                    var isUniqueConstraint = (bool)dr["is_unique_constraint"];
-                    var isUnique = (bool)dr["is_unique"];
-                    var typeDescription = (string)dr["type_desc"];
-                    var isIncludedColumn = (bool)dr["isIncludedColumn"];
-
-                    var type = "INDEX";
-
-                    if (isPrimaryKey)
-                    {
-                        type = "PRIMARY KEY";
-                    }
-
-                    if (isUniqueConstraint)
-                    {
-                        type = "UNIQUE";
-                    }
-
-                    var constraint = new PostgresConstraint(
-                        tableName,
-                        indexName,
-                        columnName,
-                        isPrimaryKey,
-                        isUniqueConstraint,
-                        isUnique,
-                        typeDescription,
-                        isIncludedColumn,
-                        type);
-
-                    constraints.Add(constraint);
+                    constraints.Add(
+                        new PostgresConstraint(
+                        constraint.TableName,
+                        constraint.Name,
+                        constraint.ColumnName,
+                        type,
+                        constraint.Definition));
                 }
-            }
+            });
+
+            var indexSql = $@"SELECT
+                                *
+                            FROM
+                                pg_indexes
+                            WHERE
+                                schemaname = '{schemaName}'";
+
+            sqlExecutor.Execute(indexSql, reader =>
+            {
+                var tableName = reader.ReadString("tablename");
+                var name = reader.ReadString("indexname");
+                var type = "INDEX";
+                var definition = reader.ReadString("indexdef");
+
+                var constraint = constraints.FirstOrDefault(c => c.TableName == tableName && c.Name == name);
+
+                if (constraint != null)
+                {
+                    constraints.Add(
+                        new PostgresConstraint(
+                        tableName,
+                        name,
+                        constraint.ColumnName,
+                        type,
+                        definition));
+                }
+            });
 
             return constraints;
         }

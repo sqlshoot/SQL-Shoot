@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
-using System.Data;
+using DatabaseInteraction;
 using SchemaSnapshot.DatabaseModel;
 
 namespace SchemaSnapshot
 {
     internal interface ITableLoader
     {
-        List<Table> LoadTablesInSchema(string schemaName, IDbCommand dbCommand);
+        List<Table> LoadTablesInSchema(string schemaName, ISqlExecutor sqlExecutor);
     }
 }

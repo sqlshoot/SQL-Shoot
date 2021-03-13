@@ -41,6 +41,11 @@ namespace DatabaseInteraction
 
         public int ReadInt(int index)
         {
+            if (_dataReader.IsDBNull(index))
+            {
+                return 0;
+            }
+
             return _dataReader.GetInt32(index);
         }
 
@@ -51,17 +56,37 @@ namespace DatabaseInteraction
 
         public string ReadString(int index)
         {
+            if (_dataReader.IsDBNull(index))
+            {
+                return string.Empty;
+            }
+           
             return _dataReader.GetString(index);
         }
 
         public bool ReadBoolean(int index)
         {
+            if (_dataReader.IsDBNull(index))
+            {
+                return false;
+            }
+
             return _dataReader.GetBoolean(index);
         }
 
         public char ReadChar(int index)
         {
+            if (_dataReader.IsDBNull(index))
+            {
+                return '0';
+            }
+
             return _dataReader.GetChar(index);
+        }
+
+        public bool ReadBoolean(string columnName)
+        {
+            return ReadBoolean(GetIndexOfColumn(columnName));
         }
     }
 }

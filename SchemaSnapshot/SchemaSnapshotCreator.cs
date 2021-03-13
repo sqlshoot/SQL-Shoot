@@ -1,44 +1,45 @@
-﻿using SchemaSnapshot.DatabaseModel;
+﻿using DatabaseInteraction;
+using SchemaSnapshot.DatabaseModel;
 using SchemaSnapshot.Postgres;
 using SchemaSnapshot.SqlServer;
-using System.Data;
 
 namespace SchemaSnapshot
 {
     public class SchemaSnapshotCreator
     {
-        public Schema CreateSqlServerSchemaSnapshot(IDbConnection dbConnection, string schemaName)
+        private readonly DatabaseInteractorFactory _databaseInteractorFactory = new DatabaseInteractorFactory();
+
+        public Schema CreateSqlServerSchemaSnapshot(string connectionString, string schemaName, string databaseName)
         {
             var schemaLoader = new SchemaLoader(
                     new SqlServerTableLoader(),
                     new SqlServerColumnLoader(),
                     new SqlServerConstraintLoader(),
-                    schemaName);
+                    schemaName,
+                    databaseName);
 
-            return CreateSchemaSnapshot(schemaLoader, dbConnection);
+            var databaseInteractor = _databaseInteractorFactory.CreateSQLServerDatabaseInteractor(connectionString, true);
+
+            return CreateSchemaSnapshot(schemaLoader, databaseInteractor);
         }
 
-        public Schema CreatePostgreSQLSchemaSnapshot(IDbConnection dbConnection, string schemaName)
+        public Schema CreatePostgreSQLSchemaSnapshot(string connectionString, string schemaName, string databaseName)
         {
             var schemaLoader = new SchemaLoader(
                     new PostgresTableLoader(),
                     new PostgresColumnLoader(),
                     new PostgresConstraintLoader(),
-                    schemaName);
+                    schemaName,
+                    databaseName);
 
-            return CreateSchemaSnapshot(schemaLoader, dbConnection);
+            var databaseInteractor = _databaseInteractorFactory.CreatePostgreSQLDatabaseInteractor(connectionString, true);
+
+            return CreateSchemaSnapshot(schemaLoader, databaseInteractor);
         }
 
-        private static Schema CreateSchemaSnapshot(SchemaLoader schemaLoader, IDbConnection connection)
+        private static Schema CreateSchemaSnapshot(SchemaLoader schemaLoader, IDatabaseInteractor databaseInteractor)
         {
-            Schema schema;
-
-            using (var command = connection.CreateCommand())
-            {
-                schema = schemaLoader.Load(command);
-            }
-
-            return schema;
+            return schemaLoader.Load(databaseInteractor);
         }
     }
 }

@@ -3,6 +3,7 @@ using DatabaseInteraction.SQLite;
 using DatabaseInteraction.SqlServer;
 using Microsoft.Data.SqlClient;
 using Npgsql;
+using SqlParser;
 using System.Data.SQLite;
 
 namespace DatabaseInteraction

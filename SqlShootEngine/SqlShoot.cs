@@ -42,8 +42,7 @@ namespace SqlShootEngine
         private readonly IResourceResolver _resourceResolver;
 
         private Configuration _configuration;
-
-        private IDbConnection _dbConnection;
+        
         private IDatabaseInteractor _databaseInteractor;
         private IChangeHistoryStore _changeHistoryStore;
         private SchemaSnapshotCreator _schemaSnapshotCreator = new SchemaSnapshotCreator();
@@ -64,13 +63,7 @@ namespace SqlShootEngine
             ValidateConfiguration(configuration);
 
             _configuration = configuration;
-            var connectionStringWithCredentials = ConnectionStringUtils.AppendCredentialsToConnectionString(
-                configuration.DatabaseEngine,
-                configuration.ConnectionString,
-                configuration.Username,
-                configuration.Password);
-
-            ConnectionStringUtils.ValidateConnectionString(configuration.DatabaseEngine, connectionStringWithCredentials);
+            var connectionStringWithCredentials = GetConnectionStringWithCredentials(configuration);
 
             var timestampProvider = new TimestampProvider();
 
@@ -115,6 +108,19 @@ namespace SqlShootEngine
             }
 
             ValidateDatabaseVersion();
+        }
+
+        private static string GetConnectionStringWithCredentials(Configuration configuration)
+        {
+            var connectionStringWithCredentials =
+                ConnectionStringUtils.AppendCredentialsToConnectionString(
+                configuration.DatabaseEngine,
+                configuration.ConnectionString,
+                configuration.Username,
+                configuration.Password);
+
+            ConnectionStringUtils.ValidateConnectionString(configuration.DatabaseEngine, connectionStringWithCredentials);
+            return connectionStringWithCredentials;
         }
 
         /// <summary>
@@ -206,38 +212,41 @@ namespace SqlShootEngine
                     {
                         Logger.WriteLine($"Running script {resource.GetName()}");
 
-                        _dbConnection.Open();
+                        _databaseInteractor.GetDatabaseConnection().Open();
                         _changeHistoryStore.Write(inProgressChange);
-                        _dbConnection.Close();
+                        _databaseInteractor.GetDatabaseConnection().Close();
 
-                        _dbConnection.Open();
+                        _databaseInteractor.GetDatabaseConnection().Open();
 
                         try
                         {
                             ExecuteScript(resource);
                         }
-                        catch
+                        catch (ScriptExecutionException scriptExecutionException)
                         {
                             RecordFailedChangeInChangeHistoryStore(resource, inProgressChange);
-                            throw;
+
+                            throw new SqlShootException(
+                                $"Failed to execute script '{resource.GetSource()}':\n{scriptExecutionException.Message}",
+                                scriptExecutionException);
                         }
 
-                        _dbConnection.Close();
+                        _databaseInteractor.GetDatabaseConnection().Close();
 
                         var appliedChange = CreateChangeFromResource(resource, type, ChangeStates.Applied);
 
-                        _dbConnection.Open();
+                        _databaseInteractor.GetDatabaseConnection().Open();
                         _changeHistoryStore.Delete(inProgressChange);
                         _changeHistoryStore.Write(appliedChange);
-                        _dbConnection.Close();
+                        _databaseInteractor.GetDatabaseConnection().Close();
                     }
                 }
             }
             catch (Exception e)
             {
-                if (_dbConnection.State != ConnectionState.Closed)
+                if (_databaseInteractor.GetDatabaseConnection().State != ConnectionState.Closed)
                 {
-                    _dbConnection.Close();
+                    _databaseInteractor.GetDatabaseConnection().Close();
                 }
 
                 throw new SqlShootException("SQL Shoot failed!", e);
@@ -261,7 +270,7 @@ namespace SqlShootEngine
         {
             CreatePrimarySchema();
 
-            _dbConnection.Open();
+            _databaseInteractor.GetDatabaseConnection().Open();
 
             if (_changeHistoryStore.Exists())
             {
@@ -281,7 +290,7 @@ namespace SqlShootEngine
                 _changeHistoryStore.Create();
             }
 
-            _dbConnection.Close();
+            _databaseInteractor.GetDatabaseConnection().Close();
         }
 
         private List<IResource> ResolveResourcesForRun()
@@ -296,21 +305,21 @@ namespace SqlShootEngine
         {
             var changeHistory = new ChangeHistory(new List<Change>());
 
-            _dbConnection.Open();
+            _databaseInteractor.GetDatabaseConnection().Open();
 
             if (_changeHistoryStore.Exists())
             {
                 changeHistory = _changeHistoryStore.Read();
             }
 
-            _dbConnection.Close();
+            _databaseInteractor.GetDatabaseConnection().Close();
 
             return changeHistory;
         }
 
         private void ValidateDatabaseVersion()
         {
-            _dbConnection.Open();
+            _databaseInteractor.GetDatabaseConnection().Open();
 
             var databaseVersion = _databaseInteractor.GetVersion();
             Logger.WriteLine($"{_configuration.DatabaseEngine} database version {databaseVersion.VersionText}");
@@ -320,7 +329,7 @@ namespace SqlShootEngine
                 Logger.WriteLine($"This version of the database has not been tested, and may not work correctly with SQL Shoot.");
             }
 
-            _dbConnection.Close();
+            _databaseInteractor.GetDatabaseConnection().Close();
 
         }
 
@@ -425,9 +434,9 @@ namespace SqlShootEngine
                 Logger.WriteLine($"Nuking database {_configuration.DatabaseName}");
             }
 
-            _dbConnection.Open();
+            _databaseInteractor.GetDatabaseConnection().Open();
             _databaseInteractor.NukeSchema(_configuration.DatabaseName, _configuration.PrimarySchema);
-            _dbConnection.Close();
+            _databaseInteractor.GetDatabaseConnection().Close();
         }
 
         /// <summary>
@@ -435,9 +444,9 @@ namespace SqlShootEngine
         /// </summary>
         public void CreateDatabase()
         {
-            _dbConnection.Open();
+            _databaseInteractor.GetDatabaseConnection().Open();
             _databaseInteractor.CreateDatabase(_configuration.DatabaseName);
-            _dbConnection.Close();
+            _databaseInteractor.GetDatabaseConnection().Close();
         }
 
         internal void CreatePrimarySchema()
@@ -447,9 +456,9 @@ namespace SqlShootEngine
                 Logger.WriteLine($"Attempting to create schema '{_configuration.PrimarySchema}', if it doesn't already exist.");
             }
 
-            _dbConnection.Open();
+            _databaseInteractor.GetDatabaseConnection().Open();
             _databaseInteractor.CreateSchema(_configuration.DatabaseName, _configuration.PrimarySchema);
-            _dbConnection.Close();
+            _databaseInteractor.GetDatabaseConnection().Close();
         }
 
         /// <summary>
@@ -457,9 +466,9 @@ namespace SqlShootEngine
         /// </summary>
         public void DeleteDatabase()
         {
-            _dbConnection.Open();
+            _databaseInteractor.GetDatabaseConnection().Open();
             _databaseInteractor.DeleteDatabase(_configuration.DatabaseName);
-            _dbConnection.Close();
+            _databaseInteractor.GetDatabaseConnection().Close();
         }
 
         /// <summary>
@@ -467,9 +476,9 @@ namespace SqlShootEngine
         /// </summary>
         public void DeleteSchema()
         {
-            _dbConnection.Open();
+            _databaseInteractor.GetDatabaseConnection().Open();
             _databaseInteractor.DeleteSchema(_configuration.DatabaseName, _configuration.PrimarySchema);
-            _dbConnection.Close();
+            _databaseInteractor.GetDatabaseConnection().Close();
         }
 
         /// <summary>
@@ -483,7 +492,7 @@ namespace SqlShootEngine
             var changeOverview = GetChangeOverview();
             var changeHistory = changeOverview.ChangeHistory;
 
-            _dbConnection.Open();
+            _databaseInteractor.GetDatabaseConnection().Open();
 
             var deletedChangeNames = new List<string>();
 
@@ -509,7 +518,7 @@ namespace SqlShootEngine
                 }
             }
 
-            _dbConnection.Close();
+            _databaseInteractor.GetDatabaseConnection().Close();
         }
 
         /// <summary>
@@ -550,7 +559,7 @@ namespace SqlShootEngine
 
                 WriteToChangeHistoryStore(inProgressChange);
 
-                _dbConnection.Open();
+                _databaseInteractor.GetDatabaseConnection().Open();
 
                 try
                 {
@@ -563,7 +572,7 @@ namespace SqlShootEngine
                     throw;
                 }
 
-                _dbConnection.Close();
+                _databaseInteractor.GetDatabaseConnection().Close();
 
                 var appliedChange = CreateChangeFromResource(resource, ResourceTypes.RevertScript, ChangeStates.Applied);
 
@@ -571,9 +580,9 @@ namespace SqlShootEngine
             }
             catch (Exception e)
             {
-                if (_dbConnection.State != ConnectionState.Closed)
+                if (_databaseInteractor.GetDatabaseConnection().State != ConnectionState.Closed)
                 {
-                    _dbConnection.Close();
+                    _databaseInteractor.GetDatabaseConnection().Close();
                 }
 
                 throw new SqlShootException("SQL Shoot failed!", e);
@@ -585,40 +594,42 @@ namespace SqlShootEngine
         /// </summary>
         public Schema Snapshot()
         {
-            // This implicilty sets the database connection to use the specified DB name
-            // TODO: Make it less hacky - inject SqlExecutor to schema comparison
-            _dbConnection.Open();
-            _databaseInteractor.SetDatabaseContext(_configuration.DatabaseName);
+            var connectionStringWithCredentials = GetConnectionStringWithCredentials(_configuration);
 
             if (DatabaseEngineUtils.DoesEngineNameMatch(_configuration.DatabaseEngine, DatabaseEngineUtils.PostgreSQL))
             {
-                return _schemaSnapshotCreator.CreatePostgreSQLSchemaSnapshot(_dbConnection, _configuration.PrimarySchema);
+                return _schemaSnapshotCreator.CreatePostgreSQLSchemaSnapshot(
+                    connectionStringWithCredentials,
+                    _configuration.PrimarySchema,
+                    _configuration.DatabaseName);
             }
             else if (DatabaseEngineUtils.DoesEngineNameMatch(_configuration.DatabaseEngine, DatabaseEngineUtils.SqlServer))
             {
-                return _schemaSnapshotCreator.CreateSqlServerSchemaSnapshot(_dbConnection, _configuration.PrimarySchema);
+                return _schemaSnapshotCreator.CreateSqlServerSchemaSnapshot(
+                    connectionStringWithCredentials,
+                    _configuration.PrimarySchema,
+                    _configuration.DatabaseName);
             }
             else
             {
                 throw new SqlShootException($"Schema snapshots for database engine '{_configuration.DatabaseEngine}' are not supported.");
             }
 
-            _dbConnection.Close();
         }
 
         private void WriteToChangeHistoryStore(Change change)
         {
-            _dbConnection.Open();
+            _databaseInteractor.GetDatabaseConnection().Open();
             _changeHistoryStore.Write(change);
-            _dbConnection.Close();
+            _databaseInteractor.GetDatabaseConnection().Close();
         }
 
         private void UpdateChangeInChangeHistoryStore(Change oldChange, Change newChange)
         {
-            _dbConnection.Open();
+            _databaseInteractor.GetDatabaseConnection().Open();
             _changeHistoryStore.Delete(oldChange);
             _changeHistoryStore.Write(newChange);
-            _dbConnection.Close();
+            _databaseInteractor.GetDatabaseConnection().Close();
         }
 
         private void RecordFailedChangeInChangeHistoryStore(IResource resource, Change inProgressChange)

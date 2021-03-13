@@ -27,5 +27,6 @@ namespace DatabaseInteraction
         int ReadInt(string columnName);
         bool ReadBoolean(int index);
         char ReadChar(int index);
+        bool ReadBoolean(string columnName);
     }
 }

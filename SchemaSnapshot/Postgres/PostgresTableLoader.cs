@@ -1,28 +1,29 @@
 ﻿using System.Collections.Generic;
-using System.Data;
+using DatabaseInteraction;
 using SchemaSnapshot.DatabaseModel;
 
 namespace SchemaSnapshot.Postgres
 {
     internal class PostgresTableLoader : ITableLoader
     {
-        public List<Table> LoadTablesInSchema(string schemaName, IDbCommand dbCommand)
+        public List<Table> LoadTablesInSchema(string schemaName, ISqlExecutor sqlExecutor)
         {
             var tables = new List<Table>();
 
-            dbCommand.CommandText = $@"
-                SELECT name FROM sys.objects
-                    WHERE schema_id = SCHEMA_ID('{schemaName}')
-                    and type = 'U'";
+            var sql = $@"
+                SELECT
+                    t.table_name FROM information_schema.tables t
+                WHERE
+                    table_schema = '{schemaName}'
+                AND
+                    table_type='BASE TABLE'";
 
-            using var dr = dbCommand.ExecuteReader();
-
-            while (dr.Read())
+            sqlExecutor.Execute(sql, reader =>
             {
-                var name = (string)dr["TABLE_NAME"];
+                var name = reader.ReadString("TABLE_NAME");
 
                 tables.Add(new PostgresTable(schemaName, name));
-            }
+            });
 
             return tables;
         }

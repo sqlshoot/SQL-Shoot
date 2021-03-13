@@ -4,25 +4,20 @@ namespace SchemaSnapshot.Postgres
 {
     internal class PostgresConstraint : Constraint
     {
+        public string Definition { get; }
+
         public PostgresConstraint(
             string tableName,
-            string indexName,
+            string name,
             string columnName,
-            bool isPrimaryKey,
-            bool isUniqueConstraint,
-            bool isUnique,
-            string typeDescription,
-            bool isIncludedColumn,
-            string type) : base(
+            string type,
+            string definition) : base(
             tableName,
-            indexName,
+            name,
             columnName,
-            isPrimaryKey,
-            isUniqueConstraint,
-            isUnique,
-            typeDescription,
-            isIncludedColumn,
             type)
-        { }
+        {
+            Definition = definition;
+        }
     }
 }

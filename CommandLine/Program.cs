@@ -257,9 +257,10 @@ namespace CLI
         {
             var schema = _sqlShoot.Snapshot();
 
-            // TODO: Sort the items before placing so they can diff easily
             var serializer = new Serializer();
-            var yaml = serializer.Serialize(schema);
+            var yaml = @$"# Snapshots are still in an experimental state, see: https://www.sqlshoot.com/documentation/snapshot
+{Environment.NewLine}
+{serializer.Serialize(schema)}";
 
             AnsiConsole.WriteLine(yaml);
         }

@@ -1,21 +1,21 @@
-﻿using System.Collections.Generic;
-using System.Data;
+﻿using DatabaseInteraction;
+using System.Collections.Generic;
 using Constraint = SchemaSnapshot.DatabaseModel.Constraint;
 
 namespace SchemaSnapshot.SqlServer
 {
     internal class SqlServerConstraintLoader : IConstraintLoader
     {
-        public List<Constraint> LoadConstraintsAndIndexesInSchema(string schemaName, IDbCommand dbCommand)
+        public List<Constraint> LoadConstraintsAndIndexesInSchema(string schemaName, ISqlExecutor sqlExecutor)
         {
             var constraints = new List<Constraint>();
 
-            dbCommand.CommandText = $@"
+            var sql = $@"
 					select 
 						s.name as schemaName,
 						t.name as tableName, 
 						t.baseType,
-						i.name as indexName, 
+						i.name as name, 
 						c.name as columnName,
 						i.is_primary_key, 
 						i.is_unique_constraint,
@@ -46,45 +46,42 @@ namespace SchemaSnapshot.SqlServer
                     and baseType = 'T'
 					order by s.name, t.name, i.name, ic.key_ordinal, ic.index_column_id";
 
-            using (var dr = dbCommand.ExecuteReader())
+            sqlExecutor.Execute(sql, reader =>
             {
-                while (dr.Read())
+                var tableName = reader.ReadString("tableName");
+                var name = reader.ReadString("name");
+                var columnName = reader.ReadString("columnName");
+                var isPrimaryKey = reader.ReadBoolean("is_primary_key");
+                var isUniqueConstraint = reader.ReadBoolean("is_unique_constraint");
+                var isUnique = reader.ReadBoolean("is_unique");
+                var typeDescription = reader.ReadString("type_desc");
+                var isIncludedColumn = reader.ReadBoolean("is_included_column");
+
+                var type = "INDEX";
+
+                if (isPrimaryKey)
                 {
-                    var tableName = (string)dr["tableName"];
-                    var indexName = (string)dr["indexName"];
-                    var columnName = (string) dr["columnName"];
-                    var isPrimaryKey = (bool) dr["is_primary_key"];
-                    var isUniqueConstraint = (bool) dr["is_unique_constraint"];
-                    var isUnique = (bool) dr["is_unique"];
-                    var typeDescription = (string) dr["type_desc"];
-                    var isIncludedColumn = (bool) dr["is_included_column"];
-
-                    var type = "INDEX";
-
-                    if (isPrimaryKey)
-                    {
-                        type = "PRIMARY KEY";
-                    }
-
-                    if (isUniqueConstraint)
-                    {
-                        type = "UNIQUE";
-                    }
-
-                    var constraint = new SqlServerConstraint(
-                        tableName,
-                        indexName,
-                        columnName,
-                        isPrimaryKey,
-                        isUniqueConstraint,
-                        isUnique,
-                        typeDescription,
-                        isIncludedColumn,
-                        type);
-
-                    constraints.Add(constraint);
+                    type = "PRIMARY KEY";
                 }
-            }
+
+                if (isUniqueConstraint)
+                {
+                    type = "UNIQUE";
+                }
+
+                var constraint = new SqlServerConstraint(
+                    tableName,
+                    name,
+                    columnName,
+                    isPrimaryKey,
+                    isUniqueConstraint,
+                    isUnique,
+                    typeDescription,
+                    isIncludedColumn,
+                    type);
+
+                constraints.Add(constraint);
+            });
 
             return constraints;
         }

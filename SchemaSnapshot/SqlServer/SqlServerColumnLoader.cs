@@ -1,16 +1,16 @@
 ﻿using System.Collections.Generic;
-using System.Data;
+using DatabaseInteraction;
 using SchemaSnapshot.DatabaseModel;
 
 namespace SchemaSnapshot.SqlServer
 {
     internal class SqlServerColumnLoader : IColumnLoader
     {
-        public List<Column> LoadColumnsForTablesInSchema(string schemaName, IDbCommand dbCommand)
+        public List<Column> LoadColumnsForTablesInSchema(string schemaName, ISqlExecutor sqlExecutor)
         {
             var columns = new List<Column>();
 
-            dbCommand.CommandText = $@"SELECT
+            var sql = $@"SELECT
                     TABLE_NAME,
                     COLUMN_NAME,
                     ORDINAL_POSITION,
@@ -21,25 +21,22 @@ namespace SchemaSnapshot.SqlServer
                 FROM INFORMATION_SCHEMA.COLUMNS
                     WHERE TABLE_SCHEMA = '{schemaName}'";
 
-            using (var dr = dbCommand.ExecuteReader())
+            sqlExecutor.Execute(sql, reader =>
             {
-                while (dr.Read())
-                {
-                    var tableName = (string) dr["TABLE_NAME"];
-                    var columnName = (string) dr["COLUMN_NAME"];
-                    var ordinalPosition = (int) dr["ORDINAL_POSITION"];
-                    var isNullable = (string) dr["IS_NULLABLE"];
-                    var dataType = (string) dr["DATA_TYPE"];
-                    var column = new SqlServerColumn(
-                        tableName,
-                        columnName,
-                        ordinalPosition,
-                        isNullable == "YES",
-                        dataType);
+                var tableName = reader.ReadString("TABLE_NAME");
+                var columnName = reader.ReadString("COLUMN_NAME");
+                var ordinalPosition = reader.ReadInt("ORDINAL_POSITION");
+                var isNullable = reader.ReadString("IS_NULLABLE");
+                var dataType = reader.ReadString("DATA_TYPE");
+                var column = new SqlServerColumn(
+                    tableName,
+                    columnName,
+                    ordinalPosition,
+                    isNullable == "YES",
+                    dataType);
 
-                    columns.Add(column);
-                }
-            }
+                columns.Add(column);
+            });
 
             return columns;
         }

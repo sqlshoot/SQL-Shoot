@@ -4,9 +4,15 @@ namespace SchemaSnapshot.SqlServer
 {
     internal class SqlServerConstraint : Constraint
     {
+        public bool IsPrimaryKey { get; }
+        public bool IsUniqueConstraint { get; }
+        public bool IsUnique { get; }
+        public string TypeDescription { get; }
+        public bool IsIncludedColumn { get; }
+
         public SqlServerConstraint(
             string tableName,
-            string indexName,
+            string name,
             string columnName,
             bool isPrimaryKey,
             bool isUniqueConstraint,
@@ -15,14 +21,15 @@ namespace SchemaSnapshot.SqlServer
             bool isIncludedColumn,
             string type) : base(
             tableName,
-            indexName,
+            name,
             columnName,
-            isPrimaryKey,
-            isUniqueConstraint,
-            isUnique,
-            typeDescription,
-            isIncludedColumn,
             type)
-        { }
+        {
+            IsPrimaryKey = isPrimaryKey;
+            IsUniqueConstraint = isUniqueConstraint;
+            IsUnique = isUnique;
+            TypeDescription = typeDescription;
+            IsIncludedColumn = isIncludedColumn;
+        }
     }
 }

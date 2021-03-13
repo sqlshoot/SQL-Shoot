@@ -120,7 +120,7 @@ namespace SqlShootEngine.Databases.SQLite
                             SET
                                 checksum = '{newChecksum}'
                             WHERE
-                                name = '{changeName}";
+                                name = '{changeName}'";
 
             _databaseInteractor.GetSqlExecutor().Execute(script);
         }
